@@ -111,7 +111,7 @@ export default function CreateUserPage() {
                         className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-600 file:text-white hover:file:bg-gray-500"
                     />
                     {imagePreview && (
-                        <img src={imagePreview} alt="プロファイル画像プレビュー" className="mt-4 w-32 h-32 object-cover rounded-full" />
+                        <img src={imagePreview} alt="サムネイル画像プレビュー" className="mt-4 w-32 h-32 object-cover rounded-full" />
                     )}
                     <button
                         onClick={handleSubmit}
