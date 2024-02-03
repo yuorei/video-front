@@ -22,6 +22,8 @@ const UPLOAD_VIDEO_MUTATION = gql`
 `;
 
 export default function Page() {
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploadVideo] = useMutation(UPLOAD_VIDEO_MUTATION);
   const [formData, setFormData] = useState({
     video: null,
@@ -36,6 +38,14 @@ export default function Page() {
       ...formData,
       [name]: files ? files[0] : value,
     });
+
+    if (name === 'thumbnailImage' && files) {
+      const file = files[0];
+      setImagePreview(URL.createObjectURL(file));
+    } else if (name === 'video' && files) {
+      const file = files[0];
+      setVideoPreview(URL.createObjectURL(file));
+    }
   };
 
   const handleUpload = async () => {
@@ -84,6 +94,9 @@ export default function Page() {
               className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               onChange={handleInputChange}
             />
+            {videoPreview && (
+              <video src={videoPreview} className="mt-4 w-full" controls />
+            )}
           </div>
           <div className="mb-4">
             <input
@@ -93,6 +106,9 @@ export default function Page() {
               className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
               onChange={handleInputChange}
             />
+            {imagePreview && (
+              <img src={imagePreview} alt="プロファイル画像プレビュー" className="mt-4  object-cover " />
+            )}
           </div>
           <div className="mb-4">
             <input
