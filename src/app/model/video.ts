@@ -14,3 +14,7 @@ export interface Uploader {
     name: string
     profileImageURL: string
 }
+
+export type GetVideoQueryData = {
+    video: Video;
+};
