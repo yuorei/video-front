@@ -46,9 +46,9 @@ export default function Video({ params }: { params: { id: string } }) {
   if (error || !data) return <p>Error :</p>;
 
   return (
-    <div className={isMobile ? "container flex flex-col" : " flex items-center gap-4"}>
+    <div className={isMobile ? "container flex flex-col" : " flex items-start gap-4"}>
       <div className="bg-black shadow-lg rounded-lg overflow-hidden">
-        <div className="bg-black rounded-lg overflow-hidden shadow-lg mx-auto ">
+        <div className="bg-black rounded-lg overflow-hidden shadow-lg mx-auto">
           <HLSPlayer src={data.video.videoURL} />
         </div>
         <div className="p-4">
