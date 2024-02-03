@@ -1,18 +1,8 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { useCookies } from "react-cookie";
 import UserRegisterButton from "@/app/components/user-register";
-
-
-// レスポンス型の定義
-interface LoginResponse {
-    ClientID: string;
-    ClientSecret: string;
-    GrantType: string;
-    Username: string;
-    Password: string;
-    Scope: string;
-}
+import { gql } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 interface Response {
     access_token: string
@@ -26,15 +16,23 @@ interface Response {
     scope: string
 }
 
+const REGISTER_USER = gql`
+  mutation RegisterUser($input: UserInput!) {
+    registerUser(input: $input) {
+      id
+      name
+    }
+  }
+`;
 
 const LoginForm: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [cookies, setCookie] = useCookies(["idToken"]);
+    const [registerUser, { data, loading, error }] = useMutation(REGISTER_USER);
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_YUOREI_AUTH_API_URL}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,18 +42,29 @@ const LoginForm: React.FC = () => {
                     password,
                 }),
             });
-
             if (!response.ok) {
                 throw new Error('Login failed');
             }
 
-            const data: Response = await response.json();
-            setCookie('idToken', data.id_token);
-
+            const loginData: Response = await response.json();
+            localStorage.setItem('token', loginData.id_token);
+            console.log('Login success:', localStorage.getItem('token'));
             // TODO graphqlでcreateUserを呼び出す
+            registerUser({ variables: { input: { name: username } } })
+                .then(response => {
+                    // 登録成功時の処理
+                    console.log('登録成功:', response.data);
+                    return
+                })
+                .catch(err => {
+                    console.error(err);
+                });
             window.location.href = '/';
+
+
         } catch (error) {
             console.error('Login error:', error);
+            alert("ユーザー名かパスワードが間違っています")
         }
     };
 
