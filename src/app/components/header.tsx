@@ -1,7 +1,5 @@
 'use client'
 import { MainNav } from "./main-nav"
-// import UserButton from "./user-button"
-import UserRegisterButton from "./user-register"
 import UploadVideo from "./upload-video"
 import Login from "./login"
 
