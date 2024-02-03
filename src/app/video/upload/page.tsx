@@ -72,35 +72,56 @@ export default function Page() {
   };
 
   return (
-    <div>
-      <h1>ビデオアップロード</h1>
-      <input
-        type="file"
-        accept="video/*"
-        name="video"
-        onChange={handleInputChange}
-      />
-      <input
-        type="file"
-        accept="image/*"
-        name="thumbnailImage"
-        onChange={handleInputChange}
-      />
-      <input
-        type="text"
-        placeholder="タイトル"
-        name="title"
-        value={formData.title}
-        onChange={handleInputChange}
-      />
-      <input
-        type="text"
-        placeholder="説明"
-        name="description"
-        value={formData.description}
-        onChange={handleInputChange}
-      />
-      <button onClick={handleUpload}>アップロード</button>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
+      <div className="p-8 bg-gray-800 shadow-lg rounded-lg max-w-md w-full">
+        <h1 className="text-2xl font-semibold text-white text-center mb-4">ビデオアップロード</h1>
+        <div>
+          <div className="mb-4">
+            <input
+              type="file"
+              accept="video/*"
+              name="video"
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="mb-4">
+            <input
+              type="file"
+              accept="image/*"
+              name="thumbnailImage"
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="タイトル"
+              name="title"
+              value={formData.title}
+              className="block w-full p-3 border border-gray-600 rounded-md bg-gray-700 text-white"
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="説明"
+              name="description"
+              value={formData.description}
+              className="block w-full p-3 border border-gray-600 rounded-md bg-gray-700 text-white"
+              onChange={handleInputChange}
+            />
+          </div>
+          <button
+            onClick={handleUpload}
+            className="w-full px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:outline-none focus:bg-blue-700"
+          >
+            アップロード
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

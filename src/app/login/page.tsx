@@ -1,8 +1,8 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import UserRegisterButton from "@/app/components/user-register";
 import { gql } from '@apollo/client';
 import { useMutation } from '@apollo/client';
+import CustomLink from "../components/custom-link"
 
 interface Response {
     access_token: string
@@ -69,27 +69,50 @@ const LoginForm: React.FC = () => {
     };
 
     return (
-        <div>
-            <div>
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Username"
-                />
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                />
-                <button onClick={handleLogin}>Login</button>
-            </div>
-            <div>
-                <UserRegisterButton />
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
+            <div className="p-8 bg-gray-800 shadow-lg rounded-lg max-w-md w-full">
+                <h2 className="text-2xl font-semibold text-white text-center">Login</h2>
+                <div className="mt-4">
+                    <div>
+                        <label className="block text-gray-300">Username</label>
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Username"
+                            className="mt-2 p-3 block w-full bg-gray-700 border border-gray-600 rounded-md text-white focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+                        />
+                    </div>
+                    <div className="mt-4">
+                        <label className="block text-gray-300">Password</label>
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Password"
+                            className="mt-2 p-3 block w-full bg-gray-700 border border-gray-600 rounded-md text-white focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+                        />
+                    </div>
+                    <div className="mt-6">
+                        <button
+                            onClick={handleLogin}
+                            className="w-full px-4 py-2 tracking-wide text-gray-900 transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-400 focus:outline-none focus:bg-blue-400"
+                        >
+                            Login
+                        </button>
+                    </div>
+                    <div className="mt-6">
+                        <CustomLink href="/register">
+                            <button
+                                className="w-full px-4 py-2 tracking-wide text-gray-900 transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-400 focus:outline-none focus:bg-blue-400"
+                            >
+                                ユーザー登録
+                            </button>
+                        </CustomLink>
+                    </div>
+                </div>
             </div>
         </div>
-
     );
 };
 
