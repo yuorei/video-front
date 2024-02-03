@@ -16,6 +16,7 @@ export default function AllVideo() {
       uploader {
         id
         name
+        profileImageURL
       }
     }
   }
@@ -41,7 +42,7 @@ export default function AllVideo() {
                 <div className="p-4 flex items-center">
                   <Link href={`/user/${video.uploader.id}`}>
                     <Image
-                      src={""} // 投稿者のアイコン画像のURL
+                      src={video.uploader.profileImageURL} // 投稿者のアイコン画像のURL
                       alt="Uploader Icon"
                       width={40} // アイコンの幅を設定
                       height={40} // アイコンの高さを設定

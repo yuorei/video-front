@@ -12,4 +12,5 @@ export interface Video {
 export interface Uploader {
     id: string
     name: string
+    profileImageURL: string
 }
