@@ -1,7 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import CustomLink from "./custom-link";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function UploadVideoButton() {
@@ -21,8 +20,8 @@ export default function UploadVideoButton() {
 
     return (
         <CustomLink href={!token ? "/login" : "/video/upload"}>
-            <Button variant="ghost" className="p-0">
-                <Image src="/logo.png" alt="Home" width="32" height="32" />
+            <Button variant="ghost" className="bg-black border border-white text-white font-bold py-2 px-4 rounded">
+                動画アップロード
             </Button>
         </CustomLink>
     );
