@@ -1,5 +1,4 @@
 'use client'
-// components/HLSPlayer.tsx
 import React, { useEffect, useRef } from 'react';
 import Hls from 'hls.js';
 
@@ -33,7 +32,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src }) => {
     }
   }, [src]);
 
-  return <video ref={videoRef} controls />;
+  return <video className="w-full" ref={videoRef} controls autoPlay />;
 };
 
 export default HLSPlayer;
