@@ -58,7 +58,16 @@ export default function Page() {
 
       console.log('アップロード成功:', data);
     } catch (error) {
-      console.error('アップロードエラー:', error);
+      let errorSting = error as string
+      console.log(errorSting)
+      if (errorSting == "ApolloError: id is nil") {
+        // /loginに移動
+        alert("再度ログインしてください")
+        window.location.href = '/login';
+        return
+      }
+      alert(errorSting)
+      console.error('アップロードエラー:', errorSting == "ApolloError: id is nil");
     }
   };
 

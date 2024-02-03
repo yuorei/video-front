@@ -22,19 +22,16 @@ export default function CreateUserPage() {
     };
 
     const handleSubmit = async () => {
-        setLoading(true);
-        setError(null);
-
         const formDataToSend = new FormData();
         Object.keys(formData).forEach(key => {
             const value = formData[key as keyof typeof formData];
-            if (value !== null) { // null チェック
+            if (value !== null) {
                 formDataToSend.append(key, value);
             }
         });
 
         try {
-            const response = await fetch('http://localhost:8083/user', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_YUOREI_AUTH_API_URL}/user`,{
                 method: 'POST',
                 body: formDataToSend,
             });
@@ -42,12 +39,9 @@ export default function CreateUserPage() {
             if (!response.ok) {
                 throw new Error(`Error: ${response.statusText}`);
             }
-
-            const responseData = await response.json();
-            console.log('ユーザー作成成功:', responseData);
+            window.location.href = '/login';
         } catch (e) {
             console.error('ユーザー作成エラー:', e);
-            // setError(e);
         } finally {
             setLoading(false);
         }
