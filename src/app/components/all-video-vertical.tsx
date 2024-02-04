@@ -6,7 +6,11 @@ import Image from "next/image";
 import { useQuery, gql } from "@apollo/client";
 import { timeAgo } from "@/app/lib/time";
 
-export default function AllVideoVertical() {
+interface Props {
+    videoID: string;
+}
+
+export default function AllVideoVertical({ videoID }: Props) {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1280);
 
     useEffect(() => {
@@ -44,45 +48,47 @@ export default function AllVideoVertical() {
         <main>
             <div className="space-y-2">
                 <div className="grid grid-cols-1 gap-4">
-                    {data.videos.map((video: Video) => (
-                        <Link href={`/video/${video.id}`} key={video.id}>
-                            <div className="flex flex-col sm:flex-row bg-black rounded-lg shadow-md overflow-hidden">
-                                <div className="flex-none">
-                                    <Image
-                                        src={video.thumbnailImageURL}
-                                        alt={video.title}
-                                        width={168}
-                                        height={94}
-                                        className="block w-full h-auto"
-                                    />
-                                </div>
-                                <div className="p-4 flex flex-col justify-between bg-black">
-                                    <div>
-                                        <h3 className="text-white font-semibold text-lg break-words">{video.title}</h3>
-                                        <div className="flex items-center">
-                                            {
-                                                isMobile && (
-                                                    <Link href={`/user/${video.uploader.id}`}>
-                                                        <Image
-                                                            src={video.uploader.profileImageURL}
-                                                            alt="Uploader Icon"
-                                                            width={40}
-                                                            height={40}
-                                                            className="rounded-full mr-4"
-                                                        />
-                                                    </Link>
-                                                )
-                                            }
-                                            <div>
-                                                <p className="text-gray-400 break-words">{video.uploader.name}</p>
-                                                <p className="text-gray-400 text-sm">{timeAgo(video.createdAt)}</p>
+                    {data.videos
+                        .filter((video: Video) => video.id !== videoID)
+                        .map((video: Video) => (
+                            <Link href={`/video/${video.id}`} key={video.id}>
+                                <div className="flex flex-col sm:flex-row bg-black rounded-lg shadow-md overflow-hidden">
+                                    <div className="flex-none">
+                                        <Image
+                                            src={video.thumbnailImageURL}
+                                            alt={video.title}
+                                            width={168}
+                                            height={94}
+                                            className="block w-full h-auto"
+                                        />
+                                    </div>
+                                    <div className="p-4 flex flex-col justify-between bg-black">
+                                        <div>
+                                            <h3 className="text-white font-semibold text-lg break-words">{video.title}</h3>
+                                            <div className="flex items-center">
+                                                {
+                                                    isMobile && (
+                                                        <Link href={`/user/${video.uploader.id}`}>
+                                                            <Image
+                                                                src={video.uploader.profileImageURL}
+                                                                alt="Uploader Icon"
+                                                                width={40}
+                                                                height={40}
+                                                                className="rounded-full mr-4"
+                                                            />
+                                                        </Link>
+                                                    )
+                                                }
+                                                <div>
+                                                    <p className="text-gray-400 break-words">{video.uploader.name}</p>
+                                                    <p className="text-gray-400 text-sm">{timeAgo(video.createdAt)}</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </Link>
-                    ))}
+                            </Link>
+                        ))}
                 </div>
             </div>
         </main>

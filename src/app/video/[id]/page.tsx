@@ -65,7 +65,7 @@ export default function Video({ params }: { params: { id: string } }) {
           </div>
         </div>
       </div>
-      <AllVideoVertical />
+      <AllVideoVertical videoID={params.id} />
     </div>
   );
 };
