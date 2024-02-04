@@ -6,6 +6,14 @@ const HelpPage: React.FC = () => {
         <div className="container mx-auto p-6 bg-black shadow rounded">
             <h1 className="text-3xl font-bold text-center text-white mb-8">動画配信サイト ヘルプページ</h1>
 
+            <div className="my-5 p-4 border-b border-gray-700">
+                <h2 className="text-xl font-semibold text-white">YuoVisionとは</h2>
+                <div className="mt-2 text-gray-300">
+                    <p>YuoVisionは、動画の視聴とアップロードが可能な動画配信プラットフォームです。</p>
+                    <p>あなたの動画をアップロードして、世界中の人々と共有しましょう。新しい発見をYuoVisionでシェアし、一緒に新しい世界を探求しましょう。</p>
+                </div>
+            </div>
+
             {/* 動画の視聴方法セクション */}
             <div className="my-5 p-4 border-b border-gray-700">
                 <h2 className="text-xl font-semibold text-white">動画の視聴方法</h2>
