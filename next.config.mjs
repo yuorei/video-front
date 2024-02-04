@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // video-storage.yuorei.com追加
+    output: 'standalone',
     images: {
         domains: ['video-storage.yuorei.com'],
     },
