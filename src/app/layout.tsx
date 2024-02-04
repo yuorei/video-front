@@ -8,9 +8,10 @@ import { WithApolloProvider } from "./providers/WithApolloProvider";
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "yuorei video",
+  title: "YuoVision",
   description:
-    "yuorei video site.",
+    `YuoVisionは、動画の視聴とアップロードが可能な動画配信プラットフォームです。
+    あなたの動画をアップロードして、世界中の人々と共有しましょう。新しい発見をYuoVisionでシェアし、一緒に新しい世界を探求しましょう。`,
 }
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
