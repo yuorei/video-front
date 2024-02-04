@@ -3,6 +3,22 @@ import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { gql } from '@apollo/client';
 
+interface UploadVideoData {
+  UploadVideo: {
+    id: string;
+    videoURL: string;
+    title: string;
+    thumbnailImageURL: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+    uploader: {
+      id: string;
+      name: string;
+    };
+  };
+}
+
 const UPLOAD_VIDEO_MUTATION = gql`
   mutation UploadVideo($input: UploadVideoInput!) {
     UploadVideo(input: $input) {
@@ -24,7 +40,9 @@ const UPLOAD_VIDEO_MUTATION = gql`
 export default function Page() {
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [uploadVideo] = useMutation(UPLOAD_VIDEO_MUTATION);
+  const [uploadVideo] = useMutation<UploadVideoData>(UPLOAD_VIDEO_MUTATION);
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     video: null,
     thumbnailImage: null,
@@ -49,6 +67,7 @@ export default function Page() {
   };
 
   const handleUpload = async () => {
+    setLoading(true);
     try {
       const { data } = await uploadVideo({
         variables: {
@@ -66,7 +85,9 @@ export default function Page() {
         },
       });
 
-      console.log('アップロード成功:', data);
+      console.log('アップロード成功:', data?.UploadVideo.id);
+      // 投稿した動画のページに移動
+      window.location.href = `/video/${data?.UploadVideo.id}`;
     } catch (error) {
       let errorSting = error as string
       console.log(errorSting)
@@ -78,6 +99,8 @@ export default function Page() {
       }
       alert(errorSting)
       console.error('アップロードエラー:', errorSting == "ApolloError: id is nil");
+    } finally {
+      setLoading(false); // ローディングを終了
     }
   };
 
@@ -132,9 +155,11 @@ export default function Page() {
           </div>
           <button
             onClick={handleUpload}
-            className="w-full px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:outline-none focus:bg-blue-700"
+            className={`w-full px-4 py-2 text-white ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+              } rounded-md focus:outline-none focus:bg-blue-700`}
+            disabled={loading}
           >
-            アップロード
+            {loading ? 'アップロード中...' : 'アップロード'}
           </button>
         </div>
       </div>
