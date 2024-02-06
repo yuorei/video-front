@@ -8,6 +8,7 @@ import { GetVideoQueryData } from '@/app/model/video';
 import { whenTimeAgo } from "@/app/lib/time";
 import AllVideoVertical from "@/app/components/all-video-vertical";
 import { GetUserResponse, GetUserVariables } from "@/app/model/user";
+import CustomLink from "@/app/components/custom-link";
 
 const GET_VIDEO_QUERY = gql`
   query GetVideo($id: ID!) {
@@ -132,10 +133,15 @@ export default function Video({ params }: { params: { id: string } }) {
         <div className="p-4">
           <h1 className="text-2xl font-bold">{videoData.video.title}</h1>
           <div className="flex items-center mt-4">
-            <Image src={videoData.video.uploader.profileImageURL} alt={videoData.video.uploader.name} className="w-10 h-10 rounded-full" width={100} height={100} />
-            <div className="ml-2">
-              <p className="text-lg">{videoData.video.uploader.name}</p>
-            </div>
+            <CustomLink href={`/channel/${videoData.video.uploader.id}`}>
+              <Image src={videoData.video.uploader.profileImageURL} alt={videoData.video.uploader.name} className="w-10 h-10 rounded-full" width={100} height={100} />
+            </CustomLink>
+            <CustomLink href={`/channel/${videoData.video.uploader.id}`}>
+              <div className="ml-2">
+                <p className="text-lg">{videoData.video.uploader.name}</p>
+              </div>
+            </CustomLink>
+
             <div>
               {
                 userData && uploaderData ?
