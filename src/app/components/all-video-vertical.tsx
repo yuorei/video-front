@@ -68,7 +68,7 @@ export default function AllVideoVertical({ videoID }: Props) {
                                             <div className="flex items-center">
                                                 {
                                                     isMobile && (
-                                                        <Link href={`/user/${video.uploader.id}`}>
+                                                        <Link href={`/channel/${video.uploader.id}`}>
                                                             <Image
                                                                 src={video.uploader.profileImageURL}
                                                                 alt="Uploader Icon"

@@ -41,7 +41,7 @@ export default function AllVideo() {
                   layout="responsive" // 必要に応じてレイアウトを設定
                 />
                 <div className="p-4 flex items-center">
-                  <Link href={`/user/${video.uploader.id}`}>
+                  <Link href={`/channel/${video.uploader.id}`}>
                     <Image
                       src={video.uploader.profileImageURL} // 投稿者のアイコン画像のURL
                       alt="Uploader Icon"
