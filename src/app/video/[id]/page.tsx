@@ -42,17 +42,6 @@ const UNSUBSCRIBE_CHANNEL = gql`
   }
 `;
 
-const GET_USER = gql`
-  query GetUser($id: ID!) {
-    user(id: $id) {
-      id
-      name
-      profileImageURL
-      subscribechannelids
-    }
-  }
-`;
-
 const GET_USER_BY_AUTH = gql`
   query GetUserByAuth {
     userByAuth {
@@ -71,7 +60,6 @@ export default function Video({ params }: { params: { id: string } }) {
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   const handleLogin = () => {
-    // 例えば、'/login' ページへリダイレクトする
     window.location.href = '/login';
   };
 
@@ -79,17 +67,13 @@ export default function Video({ params }: { params: { id: string } }) {
     variables: { id: params.id },
   });
 
-  const { loading: uploaderLoading, error: uploaderError, data: uploaderData } = useQuery<GetUserResponse, GetUserVariables>(GET_USER, {
-    variables: { id: videoData?.video.uploader.id as string },
-  });
-
   const { loading: userLoading, error: userError, data: userData, refetch: userRefetch } = useQuery(GET_USER_BY_AUTH);
 
   useEffect(() => {
-    if (userData && uploaderData) {
-      setIsSubscribed(userData.userByAuth?.subscribechannelids.includes(uploaderData.user.id));
+    if (userData) {
+      setIsSubscribed(userData.userByAuth?.subscribechannelids.includes(videoData?.video.uploader.id));
     }
-  }, [userData, uploaderData]);
+  }, [userData]);
 
   const handleSubscriptionChange = async (channelID: string, subscribe: boolean) => {
     try {
@@ -144,12 +128,12 @@ export default function Video({ params }: { params: { id: string } }) {
 
             <div>
               {
-                userData && uploaderData ?
+                userData ?
                   (
                     <button
                       className={`${isSubscribed ? 'bg-red-500 hover:bg-red-700' : 'bg-blue-500 hover:bg-blue-700'
                         } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
-                      onClick={() => handleSubscriptionChange(uploaderData.user.id, !isSubscribed)}
+                      onClick={() => handleSubscriptionChange(videoData.video.uploader.id, !isSubscribed)}
                     >
                       {isSubscribed ? '登録済み' : 'チャンネル登録'}
                     </button>
