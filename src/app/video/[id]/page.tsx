@@ -7,8 +7,8 @@ import { useQuery, useMutation } from '@apollo/client';
 import { GetVideoQueryData } from '@/app/model/video';
 import { whenTimeAgo } from "@/app/lib/time";
 import AllVideoVertical from "@/app/components/all-video-vertical";
-import { GetUserResponse, GetUserVariables } from "@/app/model/user";
 import CustomLink from "@/app/components/custom-link";
+import Comments from "@/app/components/comment";
 
 const GET_VIDEO_QUERY = gql`
   query GetVideo($id: ID!) {
@@ -153,6 +153,7 @@ export default function Video({ params }: { params: { id: string } }) {
             <p className="text-sm text-white">{whenTimeAgo(videoData.video.createdAt)}</p>
             <p className="text-white">{videoData.video.description}</p>
           </div>
+          <Comments videoID={params.id} />
         </div>
       </div>
       <AllVideoVertical videoID={params.id} />
