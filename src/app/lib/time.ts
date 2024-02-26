@@ -1,6 +1,7 @@
 export function timeAgo(dateString: string): string {
-    const date = new Date(dateString);
-    const now = new Date();
+    let formattedDate = formatDate(dateString);
+    let date = new Date(formattedDate)
+    let now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
     const secondsInMinute = 60;
@@ -34,9 +35,10 @@ export function timeAgo(dateString: string): string {
 }
 
 export function whenTimeAgo(dateString: string): string {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    let formattedDate = formatDate(dateString);
+    let date = new Date(formattedDate)
+    let now = new Date();
+    let diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
     const secondsInMinute = 60;
     const secondsInHour = 3600;
@@ -68,4 +70,11 @@ export function whenTimeAgo(dateString: string): string {
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}/${month}/${day}`;
     }
+}
+
+function formatDate(dateString: string): string {
+    const [datePart, timePart] = dateString.split(" ");
+    const [year, month, day] = datePart.split("-").map(part => parseInt(part));
+    const [hour, minute, second] = timePart.split(":").map(part => parseInt(part));
+    return `${year}/${month}/${day} ${hour}:${minute}:${second}`;
 }
