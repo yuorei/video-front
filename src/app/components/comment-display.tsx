@@ -3,6 +3,8 @@ import { useQuery } from '@apollo/client';
 import { gql } from '@apollo/client';
 import CommentForm from './comment-post';
 import { timeAgo } from '@/app/lib/time';
+import LoadingPage from './loading';
+import ErrorPage from './error';
 
 const COMMENTS_BY_VIDEO = gql`
   query CommentsByVideo($videoID: ID!) {
@@ -45,8 +47,8 @@ const Comments: React.FC<CommentsProps> = ({ videoID }) => {
         variables: { videoID },
     });
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error.message}</p>;
+    if (loading) return <LoadingPage />;
+    if (error) return <ErrorPage errorMessage={error.message} />;
 
     return (
         <div className="mt-4">

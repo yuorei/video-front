@@ -3,6 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useQuery, gql } from "@apollo/client";
 import { timeAgo } from "@/app/lib/time";
+import ErrorPage from "./error";
+import LoadingPage from "./loading";
 
 export default function AllVideo() {
   const GET_VIDEOS_QUERY = gql`
@@ -23,8 +25,8 @@ export default function AllVideo() {
 `;
 
   const { loading, error, data } = useQuery(GET_VIDEOS_QUERY);
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :</p>
+  if (loading) return <LoadingPage />;
+  if (error) return <ErrorPage errorMessage={error.message} />
   return (
     <main>
       <div className="space-y-2">
@@ -53,7 +55,7 @@ export default function AllVideo() {
                   <div>
                     <h3 className="text-white font-semibold text-lg break-words">{video.title}</h3>
                     <p className="text-gray-400 break-words">{video.uploader.name}</p>
-                    <p className="text-gray-400 text-sm">{timeAgo(video.createdAt)}</p>
+                    <p className="text-gray-400 text-sm">{timeAgo(video.createdAt)}, {video.createdAt}</p>
                   </div>
                 </div>
               </div>

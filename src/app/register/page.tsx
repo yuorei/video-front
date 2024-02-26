@@ -1,5 +1,7 @@
 'use client'
 import React, { useState, ChangeEvent } from 'react';
+import LoadingPage from '../components/loading';
+import ErrorPage from '../components/error';
 
 export default function CreateUserPage() {
     const [formData, setFormData] = useState({
@@ -55,8 +57,8 @@ export default function CreateUserPage() {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
+    if (loading) return <LoadingPage />;
+    if (error) return <ErrorPage errorMessage={"不明なエラー"} />;
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">

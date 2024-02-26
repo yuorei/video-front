@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useQuery, gql } from "@apollo/client";
 import { timeAgo } from "@/app/lib/time";
+import ErrorPage from "./error";
+import LoadingPage from "./loading";
 
 interface Props {
     videoID: string;
@@ -42,8 +44,8 @@ export default function AllVideoVertical({ videoID }: Props) {
 `;
 
     const { loading, error, data } = useQuery(GET_VIDEOS_QUERY);
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :</p>
+    if (loading) return <LoadingPage />;
+    if (error) return <ErrorPage errorMessage={error.message} />
     return (
         <main>
             <div className="space-y-2">
