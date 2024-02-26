@@ -55,7 +55,7 @@ export default function AllVideo() {
                   <div>
                     <h3 className="text-white font-semibold text-lg break-words">{video.title}</h3>
                     <p className="text-gray-400 break-words">{video.uploader.name}</p>
-                    <p className="text-gray-400 text-sm">{timeAgo(video.createdAt)}, {video.createdAt}</p>
+                    <p className="text-gray-400 text-sm">{timeAgo(video.createdAt)}</p>
                   </div>
                 </div>
               </div>
