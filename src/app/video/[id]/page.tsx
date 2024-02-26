@@ -9,6 +9,8 @@ import { whenTimeAgo } from "@/app/lib/time";
 import AllVideoVertical from "@/app/components/all-video-vertical";
 import CustomLink from "@/app/components/custom-link";
 import Comments from "@/app/components/comment";
+import LoadingPage from "@/app/components/loading";
+import ErrorPage from "@/app/components/error";
 
 const GET_VIDEO_QUERY = gql`
   query GetVideo($id: ID!) {
@@ -105,8 +107,8 @@ export default function Video({ params }: { params: { id: string } }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  if (videoLoading) return <p>Loading...</p>;
-  if (videoError || videoError || !videoData) return <p>Error :</p>;
+  if (videoLoading) return <LoadingPage />;
+  if (videoError || videoError || !videoData) return <ErrorPage errorMessage={videoError?.message || userError?.message || "不明なエラー"} />;
 
   return (
     <div className={isMobile ? "container flex flex-col" : " flex items-start gap-4"}>
