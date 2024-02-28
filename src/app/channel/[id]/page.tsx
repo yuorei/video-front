@@ -12,6 +12,8 @@ import CustomLink from "@/app/components/custom-link";
 import { Video } from "@/app/model/video";
 import Link from "next/link";
 import { timeAgo } from "@/app/lib/time";
+import LoadingPage from "@/app/components/loading";
+import ErrorPage from "@/app/components/error";
 
 const SUBSCRIBE_CHANNEL = gql`
   mutation SubscribeChannel($channelID: ID!) {
@@ -117,8 +119,8 @@ export default function Video({ params }: { params: { id: string } }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  if (uploaderLoading || userLoading) return <p>Loading...</p>;
-  if (uploaderError || !uploaderData) return <p>Error :</p>;
+  if (uploaderLoading || userLoading) return <LoadingPage />;
+  if (uploaderError || !uploaderData) return <ErrorPage errorMessage={uploaderError?.message || "不明なエラー"} />;
 
   return (
     <main>

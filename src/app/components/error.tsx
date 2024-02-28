@@ -1,21 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
+import CustomLink from './custom-link';
+import { notFound } from 'next/navigation';
 
 interface ErrorProps {
     errorMessage: string;
 }
 
 const ErrorPage: React.FC<ErrorProps> = ({ errorMessage }) => {
-    const [showDetails, setShowDetails] = useState(false);
+    console.error(errorMessage)
 
-    const toggleDetails = () => {
-        setShowDetails(!showDetails);
+    const reloadPage = () => {
+        window.location.reload();
     };
+
+    if (errorMessage == "mongo: no documents in result") {
+        notFound()
+    }
 
     return (
         <div className="flex h-screen">
             <div className="flex mx-auto bg-black shadow-lg rounded-lg overflow-hidden">
                 <div className="w-full h-1/3 sm:w-auto sm:h-auto">
-                    {/* 画像は適切なURLを指定 */}
                     <img
                         className="w-full h-full object-cover pointer-events-none"
                         src="/error.png"
@@ -23,21 +28,18 @@ const ErrorPage: React.FC<ErrorProps> = ({ errorMessage }) => {
                     />
                 </div>
                 <div className="w-auto bg-black text-white py-8 px-6 sm:flex sm:flex-col sm:justify-center sm:items-center">
-                    <h2 className="text-1xl sm:text-5xl font-semibold mb-2">Sorry<br />エラーが発生しました。</h2>
-                    {/* 詳細を表示するボタン */}
-                    <button
-                        className="mt-4 px-4 py-2 md:text-2xl bg-white text-black rounded hover:bg-gray-200"
-                        onClick={toggleDetails}
-                    >
-                        {showDetails ? "隠す" : "詳細"}
+                    <h2 className="text-2xl sm:text-7xl font-semibold mb-2">エラーが発生しました。</h2>
+                    <p className="text-sm sm:text-3xl mb-4">しばらくしてから再度お試しください。</p>
+                    <p className="text-xs sm:text-3xl mb-4">最新の情報はこちらをご覧ください。</p>
+                    <div className="flex flex-col sm:flex-row sm:items-center">
+                        <p className="text-xs sm:text-3xl mb-4 mr-4">公式Xアカウント</p>
+                        <CustomLink href="https://twitter.com/yuovision" className='text-xs sm:text-3xl mb-4 mr-4 text-blue-300'>
+                            https://twitter.com/yuovision
+                        </CustomLink>
+                    </div>
+                    <button onClick={reloadPage} className="text-xs sm:text-3xl mb-4 bg-black border hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        再読み込み
                     </button>
-                    {/* 詳細が表示されている場合は、詳細を表示 */}
-                    {showDetails && (
-                        <div className="mt-4">
-                            {/* 詳細内容をここに追加 */}
-                            <p className='text-1xl sm:text-5xl whitespace-normal text-white'>{errorMessage}</p>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

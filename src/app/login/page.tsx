@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { gql } from '@apollo/client';
 import { useMutation } from '@apollo/client';
 import CustomLink from "../components/custom-link"
+import LoadingPage from '../components/loading';
+import ErrorPage from '../components/error';
 
 interface Response {
     access_token: string
@@ -49,24 +51,28 @@ const LoginForm: React.FC = () => {
             const loginData: Response = await response.json();
             localStorage.setItem('token', loginData.id_token);
             console.log('Login success:', localStorage.getItem('token'));
-            // TODO graphqlでcreateUserを呼び出す
             registerUser({ variables: { input: { name: username } } })
                 .then(response => {
                     // 登録成功時の処理
                     console.log('登録成功:', response.data);
-                    return
+                    window.location.href = '/';
                 })
                 .catch(err => {
-                    console.error(err);
+                    if (!err.message.includes("duplicate key")) {
+                        localStorage.removeItem('token');
+                        alert("エラーが発生しました。もう一度ログインしてください。")
+                        return
+                    }
+                    window.location.href = '/';
                 });
-            window.location.href = '/';
-
-
         } catch (error) {
             console.error('Login error:', error);
             alert("ユーザー名かパスワードが間違っています")
         }
     };
+
+    if (loading) return <LoadingPage />;
+    if (error && !error.message.includes("duplicate key")) return <ErrorPage errorMessage={error.message} />;
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
