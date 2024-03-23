@@ -10,6 +10,17 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
 
+  // クエリパラメーターから再生時間指定
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get('t');
+    if (t) {
+      if (videoRef.current) {
+        videoRef.current.currentTime = parseFloat(t);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     let hls: Hls;
 
