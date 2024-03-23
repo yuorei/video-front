@@ -9,6 +9,10 @@ interface HLSPlayerProps {
 const HLSPlayer: React.FC<HLSPlayerProps> = ({ src }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [volume, setVolume] = useState(1); // 初期音量は最大値である1としています
+  const [isPiPSupported, setIsPiPSupported] = useState(false);
+
 
   // クエリパラメーターから再生時間指定
   useEffect(() => {
@@ -18,7 +22,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src }) => {
       if (videoRef.current) {
         try {
           videoRef.current.currentTime = parseFloat(t);
-        }catch(e){
+        } catch (e) {
           console.log(e);
         }
       }
@@ -72,6 +76,64 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src }) => {
     }
   };
 
+  // PiP
+  useEffect(() => {
+    const video = videoRef.current;
+
+    if (video && 'pictureInPictureEnabled' in document) {
+      setIsPiPSupported(true);
+    } else {
+      setIsPiPSupported(false);
+    }
+  }, [src]);
+
+  // 再生ボタンのクリックハンドラ
+  const handlePlayPause = () => {
+    const video = videoRef.current;
+    if (video) {
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    }
+  };
+
+  // 倍速の変更ハンドラ
+  const handlePlaybackRateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newPlaybackRate = parseFloat(event.target.value);
+    setPlaybackRate(newPlaybackRate);
+    if (videoRef.current) {
+      videoRef.current.playbackRate = newPlaybackRate;
+    }
+  };
+
+  // 音量の変更ハンドラ
+  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(event.target.value);
+    setVolume(newVolume);
+    if (videoRef.current) {
+      videoRef.current.volume = newVolume;
+    }
+  };
+
+  // PiPモード
+  const enterPiP = () => {
+    if (videoRef.current) {
+      videoRef.current.requestPictureInPicture();
+    }
+  };
+
+  // フルスクリーン
+  const enterFullscreen = () => {
+    const video = videoRef.current;
+    if (video) {
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      }
+    }
+  };
+
   const decimalPoint = 0;
   return (
     <div>
@@ -85,8 +147,25 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src }) => {
         value={currentTime}
         onChange={handleTimeChange}
       /> */}
+      {/* <button onClick={handlePlayPause}>{videoRef.current?.paused ? '再生' : '一時停止'}</button>
+      <select value={playbackRate} onChange={handlePlaybackRateChange}>
+        <option value={1}>通常</option>
+        <option value={1.5}>1.5倍速</option>
+        <option value={2}>2倍速</option>
+      </select>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value={volume}
+        onChange={handleVolumeChange}
+      />
+      {isPiPSupported && (
+        <button onClick={enterPiP}>PiPモードに切り替える</button>
+      )}
+       <button onClick={enterFullscreen}>全画面表示に切り替える</button> */}
     </div>
-
   )
 };
 
