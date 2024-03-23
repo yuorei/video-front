@@ -16,7 +16,11 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src }) => {
     const t = params.get('t');
     if (t) {
       if (videoRef.current) {
-        videoRef.current.currentTime = parseFloat(t);
+        try {
+          videoRef.current.currentTime = parseFloat(t);
+        }catch(e){
+          console.log(e);
+        }
       }
     }
   }, []);
