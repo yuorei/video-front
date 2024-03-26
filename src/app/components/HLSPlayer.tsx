@@ -1,13 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 
-interface HLSPlayerProps {
-  src: string; // 元の動画URL
-  altSrc: string; // 別の動画URL
-  switchTime: number; // 切り替える時間（秒）
+export interface Ad {
+  adURL: string;
+  adTiming: number;
 }
 
-const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, altSrc, switchTime }) => {
+interface HLSPlayerProps {
+  src: string; // 元の動画URL
+  ads: Ad[]; // 広告情報の配列
+}
+
+
+const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
@@ -37,22 +42,24 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, altSrc, switchTime }) => {
     const video = videoRef.current;
     if (video) {
       const switchVideo = () => {
-        if (video.currentTime >= switchTime && !isAltVideo && !isAdPlayed) {
+        if (video.currentTime >= ads[currentTime2].adTiming && !isAdPlayed && !isAltVideo) {
           setCurrentTime(videoRef.current?.currentTime as number);
-          video.src = altSrc; // 広告動画をセット
-          video.play();
+          video.src = ads[currentTime2].adURL; // 広告動画をセット
           setIsAltVideo(true);
+          video.play();
         }
       };
 
       const onAltVideoEnd = () => {
         if (isAltVideo) {
           video.src = src; // 元の動画に戻す
-          video.currentTime = switchTime; //広告挿入タイミングに戻す
-          setIsAdPlayed(true);
-          video.play();
+          video.currentTime = ads[currentTime2].adTiming; //広告挿入タイミングに戻す
           setIsAltVideo(false);
+          video.play();
           setCurrentTime2(currentTime2 + 1)
+          if (ads.length <= currentTime2 + 1) {
+            setIsAdPlayed(true);
+          }
         }
       };
 
@@ -64,7 +71,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, altSrc, switchTime }) => {
         video.removeEventListener('ended', onAltVideoEnd);
       };
     }
-  }, [src, altSrc, switchTime, isAltVideo]);
+  }, [src, ads, isAltVideo]);
 
   // HLSのセットアップ
   useEffect(() => {
@@ -72,14 +79,13 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, altSrc, switchTime }) => {
 
     if (videoRef.current) {
       const video = videoRef.current;
-
       if (Hls.isSupported()) {
         hls = new Hls();
-        hls.loadSource(isAltVideo ? altSrc : src);
+        hls.loadSource(isAltVideo ? ads[currentTime2].adURL : src);
         hls.attachMedia(video);
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         // HLS support for platforms like Safari
-        video.src = isAltVideo ? altSrc : src;
+        video.src = isAltVideo ? ads[currentTime2].adURL : src;
       }
 
       return () => {
@@ -88,7 +94,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, altSrc, switchTime }) => {
         }
       };
     }
-  }, [src, altSrc, isAltVideo]);
+  }, [src, ads, isAltVideo]);
 
   // 再生時間の取得
   useEffect(() => {
@@ -175,36 +181,69 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, altSrc, switchTime }) => {
   const decimalPoint = 0;
   return (
     <div>
-      <video className="w-full" ref={videoRef} controls autoPlay />
-      {/* <p>現在の再生時間: {currentTime.toFixed(decimalPoint)} 秒</p> */}
-      {/* <input
-        type="range"
-        min="0"
-        max={videoRef.current?.duration || 0}
-        step="1"
-        value={currentTime}
-        onChange={handleTimeChange}
-      /> */}
-      {/* <button onClick={handlePlayPause}>{videoRef.current?.paused ? '再生' : '一時停止'}</button>
-      <select value={playbackRate} onChange={handlePlaybackRateChange}>
-        <option value={1}>通常</option>
-        <option value={1.5}>1.5倍速</option>
-        <option value={2}>2倍速</option>
-      </select>
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value={volume}
-        onChange={handleVolumeChange}
-      />
-      {isPiPSupported && (
-        <button onClick={enterPiP}>PiPモードに切り替える</button>
-      )}
-       <button onClick={enterFullscreen}>全画面表示に切り替える</button> */}
+      <div className="relative">
+        <video className="w-full" ref={videoRef} autoPlay />
+        {isAltVideo ? (
+          <p className="absolute top-0 left-0 bg-black text-white px-2 py-1">広告再生中</p>
+        ) : null}
+      </div>
+      <div className="p-4 flex flex-col md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center">
+          <button className="px-4 py-2 bg-blue-500 text-white rounded-lg" onClick={handlePlayPause}>
+            {/* TODO: SVGにする */}
+            {videoRef.current?.paused ? '→' : '||'}
+          </button>
+          <p className="text-gray-600 ml-2">{currentTime.toFixed(decimalPoint)}/{videoRef.current?.duration.toFixed(decimalPoint)}</p>
+        </div>
+        {/* 音量設定 */}
+        {/* <input
+          type="range"
+          className="mt-2 w-full md:w-2/3"
+          min="0"
+          max="1"
+          step="0.01"
+          value={volume}
+          onChange={handleVolumeChange}
+        /> */}
+        {!isAltVideo ? (
+          <input
+            type="range"
+            className="mt-2 w-full"
+            min="0"
+            max={videoRef.current?.duration || 0}
+            step="1"
+            value={currentTime}
+            onChange={handleTimeChange}
+          />
+        ) : null}
+        {!isAltVideo ? (
+          <div className="flex items-center mt-4 md:mt-0">
+            <select
+              className="selectbox-6 appearance-none min-w-230px h-11 px-4 py-1 border border-gray-300 rounded-full bg-white text-gray-700 font-normal text-sm cursor-pointer"
+              value={playbackRate}
+              onChange={handlePlaybackRateChange}
+            >
+              <option value={0.25}>0.25倍速</option>
+              <option value={0.5}>0.5倍速</option>
+              <option value={1}>標準</option>
+              <option value={1.5}>1.5倍速</option>
+              <option value={2}>2倍速</option>
+              <option value={2.5}>2.5倍速</option>
+              <option value={3}>3倍速</option>
+            </select>
+          </div>
+        ) : null}
+      </div>
+      <div className="flex justify-center">
+        {isPiPSupported && (
+          <button className="mt-4 mr-2 px-4 py-2 bg-blue-500 text-white rounded-lg" onClick={enterPiP}>PiP</button>
+        )}
+        {/* コンソールが有効になってしまう */}
+        {/* <button className="px-4 py-2 bg-blue-500 text-white rounded-lg" onClick={enterFullscreen}>全画面</button> */}
+      </div>
+
+
     </div>
   );
-};
-
+}
 export default HLSPlayer;

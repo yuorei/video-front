@@ -11,6 +11,7 @@ import CustomLink from "@/app/components/custom-link";
 import Comments from "@/app/components/comment";
 import LoadingPage from "@/app/components/loading";
 import ErrorPage from "@/app/components/error";
+import { Ad } from "@/app/components/HLSPlayer";
 
 const GET_VIDEO_QUERY = gql`
   query GetVideo($id: ID!) {
@@ -110,11 +111,17 @@ export default function Video({ params }: { params: { id: string } }) {
   if (videoLoading) return <LoadingPage />;
   if (videoError || videoError || !videoData) return <ErrorPage errorMessage={videoError?.message || userError?.message || "不明なエラー"} />;
 
+  // 仮の広告データ
+  const ads: Ad[] = [
+    { adURL: "https://video-storage.yuorei.com/video/output_video_4d30ee62-eb87-11ee-b465-0242ac110002.m3u8", adTiming: 20 },
+    { adURL: "https://video-storage.yuorei.com/video/output_video_4d30ee62-eb87-11ee-b465-0242ac110002.m3u8", adTiming: 60 },
+  ];
+
   return (
     <div className={isMobile ? "container flex flex-col" : " flex items-start gap-4"}>
       <div className="bg-black shadow-lg rounded-lg overflow-hidden">
         <div className="bg-black rounded-lg overflow-hidden shadow-lg mx-auto">
-          <HLSPlayer src={videoData.video.videoURL} altSrc="https://video-storage.yuorei.com/video/output_video_f90447e3-d4cd-11ee-9734-0242ac110002.m3u8" switchTime={10} />
+          <HLSPlayer src={videoData.video.videoURL} ads={ads} />
         </div>
         <div className="p-4">
           <h1 className="text-2xl font-bold">{videoData.video.title}</h1>
