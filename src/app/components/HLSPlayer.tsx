@@ -1,17 +1,21 @@
-'use client'
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 
 interface HLSPlayerProps {
-  src: string;
+  src: string; // 元の動画URL
+  altSrc: string; // 別の動画URL
+  switchTime: number; // 切り替える時間（秒）
 }
 
-const HLSPlayer: React.FC<HLSPlayerProps> = ({ src }) => {
+const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, altSrc, switchTime }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [volume, setVolume] = useState(1); // 初期音量は最大値である1としています
   const [isPiPSupported, setIsPiPSupported] = useState(false);
+  const [isAltVideo, setIsAltVideo] = useState(false);
+  const [isAdPlayed, setIsAdPlayed] = useState(false);
+  const [currentTime2, setCurrentTime2] = useState(0);
 
 
   // クエリパラメーターから再生時間指定
@@ -27,8 +31,42 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src }) => {
         }
       }
     }
-  }, []);
+  }, [src]);
+  // 切り替えのロジック
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      const switchVideo = () => {
+        if (video.currentTime >= switchTime && !isAltVideo && !isAdPlayed) {
+          setCurrentTime(videoRef.current?.currentTime as number);
+          video.src = altSrc; // 広告動画をセット
+          video.play();
+          setIsAltVideo(true);
+        }
+      };
 
+      const onAltVideoEnd = () => {
+        if (isAltVideo) {
+          video.src = src; // 元の動画に戻す
+          video.currentTime = switchTime; //広告挿入タイミングに戻す
+          setIsAdPlayed(true);
+          video.play();
+          setIsAltVideo(false);
+          setCurrentTime2(currentTime2 + 1)
+        }
+      };
+
+      video.addEventListener('timeupdate', switchVideo);
+      video.addEventListener('ended', onAltVideoEnd);
+
+      return () => {
+        video.removeEventListener('timeupdate', switchVideo);
+        video.removeEventListener('ended', onAltVideoEnd);
+      };
+    }
+  }, [src, altSrc, switchTime, isAltVideo]);
+
+  // HLSのセットアップ
   useEffect(() => {
     let hls: Hls;
 
@@ -37,11 +75,11 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src }) => {
 
       if (Hls.isSupported()) {
         hls = new Hls();
-        hls.loadSource(src);
+        hls.loadSource(isAltVideo ? altSrc : src);
         hls.attachMedia(video);
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         // HLS support for platforms like Safari
-        video.src = src;
+        video.src = isAltVideo ? altSrc : src;
       }
 
       return () => {
@@ -50,7 +88,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src }) => {
         }
       };
     }
-  }, [src]);
+  }, [src, altSrc, isAltVideo]);
 
   // 再生時間の取得
   useEffect(() => {
@@ -166,7 +204,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src }) => {
       )}
        <button onClick={enterFullscreen}>全画面表示に切り替える</button> */}
     </div>
-  )
+  );
 };
 
 export default HLSPlayer;

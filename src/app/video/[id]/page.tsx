@@ -114,7 +114,7 @@ export default function Video({ params }: { params: { id: string } }) {
     <div className={isMobile ? "container flex flex-col" : " flex items-start gap-4"}>
       <div className="bg-black shadow-lg rounded-lg overflow-hidden">
         <div className="bg-black rounded-lg overflow-hidden shadow-lg mx-auto">
-          <HLSPlayer src={videoData.video.videoURL} />
+          <HLSPlayer src={videoData.video.videoURL} altSrc="https://video-storage.yuorei.com/video/output_video_f90447e3-d4cd-11ee-9734-0242ac110002.m3u8" switchTime={10} />
         </div>
         <div className="p-4">
           <h1 className="text-2xl font-bold">{videoData.video.title}</h1>
