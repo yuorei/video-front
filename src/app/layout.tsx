@@ -12,6 +12,26 @@ export const metadata: Metadata = {
   description:
     `YuoVisionは、動画の視聴とアップロードが可能な動画配信プラットフォームです。
     あなたの動画をアップロードして、世界中の人々と共有しましょう。新しい発見をYuoVisionでシェアし、一緒に新しい世界を探求しましょう。`,
+  openGraph: {
+    type: "website",
+    locale: "ja_JP",
+    siteName: "YuoVision",
+    images: [
+      {
+        url: "https://yuovision.yuorei.com",
+        width: 1200,
+        height: 630,
+        alt: "YuoVision",
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'YuoVision',
+    description: 'YuoVisionは、動画の視聴とアップロードが可能な動画配信プラットフォームです。',
+    site: '@yuovision',
+    creator: '@yuorei71',
+  },
 }
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
