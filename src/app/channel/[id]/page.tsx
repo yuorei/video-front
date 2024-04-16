@@ -1,15 +1,10 @@
 'use client'
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import Image from "next/image";
-import HLSPlayer from '@/app/components/HLSPlayer';
 import { gql } from '@apollo/client';
 import { useQuery, useMutation } from '@apollo/client';
-import { GetVideoQueryData } from '@/app/model/video';
-import { whenTimeAgo } from "@/app/lib/time";
-import AllVideoVertical from "@/app/components/all-video-vertical";
 import { GetUserResponse, GetUserVariables } from "@/app/model/user";
-import CustomLink from "@/app/components/custom-link";
-import { Video } from "@/app/model/video";
+import { Video as videoInterface } from "@/app/model/video";
 import Link from "next/link";
 import { timeAgo } from "@/app/lib/time";
 import LoadingPage from "@/app/components/loading";
@@ -160,7 +155,7 @@ export default function Video({ params }: { params: { id: string } }) {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {uploaderData?.user.videos.map((video: Video) => (
+          {uploaderData?.user.videos.map((video: videoInterface) => (
             <Link href={`/video/${video.id}`} key={video.id}>
               <div className="bg-black rounded-lg shadow-md overflow-hidden">
                 <Image
