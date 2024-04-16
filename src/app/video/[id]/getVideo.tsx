@@ -9,6 +9,7 @@ const GET_VIDEO_QUERY = gql`
       title
       description
       createdAt
+      thumbnailImageURL
       uploader {
         id
         name
