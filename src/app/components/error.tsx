@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import CustomLink from './custom-link';
 import { notFound } from 'next/navigation';
