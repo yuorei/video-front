@@ -17,10 +17,17 @@ export async function generateMetadata(
   let video = await getVideo({id})
 
   return {
-    title: video?.title || 'Yuovision',
-    description: video?.description || 'Yuovision',
+    title: video?.title || 'YuoVision',
+    description: video?.description || 'YuoVision',
     openGraph: {
       images: [video?.thumbnailImageURL|| '/opengraph-image.jpg'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: video?.title || 'YuoVision',
+      description: video?.description || 'YuoVision',
+      site: '@yuovision',
+      creator: '@yuorei71',
     },
   }
 }
