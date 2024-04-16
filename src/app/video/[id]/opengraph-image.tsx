@@ -36,4 +36,4 @@ let video = await getVideo({id})
   )
 }
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
