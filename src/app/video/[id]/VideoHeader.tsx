@@ -1,3 +1,4 @@
+'use client'
 import Image from 'next/image';
 import { GetVideoQueryData } from '@/app/model/video';
 import CustomLink from '@/app/components/custom-link';
