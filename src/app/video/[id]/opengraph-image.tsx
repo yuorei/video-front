@@ -14,6 +14,7 @@ export default async function og({ params }: { params: { id: string } }) {
   let video = await getVideo({ id })
   console.log("OGP動画取得",video)
   try {
+    console.log("OGP画像URL",video?.thumbnailImageURL)
     let imageResponse = new ImageResponse(
       (
         <div
