@@ -11,10 +11,7 @@ export const size = {
 
 export default async function og({ params }: { params: { id: string } }) {
 const id = params.id
-// let video = await getVideo({id})
-// TODO
-// ./node_modules/@apollo/client/react/hooks/internal/useLazyRef.js
-// Attempted import error: 'useRef' is not exported from 'react' (imported as 'React').
+let video = await getVideo({id})
 
   return new ImageResponse(
     (
@@ -30,7 +27,7 @@ const id = params.id
           color: '#000',
         }}
       >
-        {/* <img src={video?.thumbnailImageURL ||'/opengraph-image.jpg'} alt={video?.title} /> */}
+        <img src={video?.thumbnailImageURL ||'/opengraph-image.jpg'} alt={video?.title} />
       </div>
     ),
     {
