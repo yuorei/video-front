@@ -5,7 +5,10 @@ import { setContext } from '@apollo/client/link/context';
 const url = `${process.env.NEXT_PUBLIC_API_URL}/graphql`
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('token');
+  let token: string | null = null;
+  if (typeof localStorage !== "undefined") {
+    token = localStorage.getItem('token');
+  }
   return {
     headers: {
       ...headers,
