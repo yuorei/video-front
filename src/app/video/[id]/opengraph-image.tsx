@@ -12,7 +12,7 @@ export const size = {
 export default async function og({ params }: { params: { id: string } }) {
   const id = params.id
   let video = await getVideo({ id })
-  console.log(video)
+  console.log("OGP動画取得",video)
   try {
     let imageResponse = new ImageResponse(
       (
@@ -39,7 +39,7 @@ export default async function og({ params }: { params: { id: string } }) {
     return imageResponse
 
   } catch (error) {
-    console.error(error)
+    console.error("OGPエラー",error)
   }
 }
 
