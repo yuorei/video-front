@@ -28,7 +28,7 @@ export default async function og({ params }: { params: { id: string } }) {
             color: '#000',
           }}
         >
-          <img src={video?.thumbnailImageURL || '/opengraph-image.jpg'} alt={video?.title} />
+          <img src={video?.thumbnailImageURL || 'https://yuovision.yuorei.com/opengraph-image.jpg'} alt={video?.title} />
         </div>
       ),
       {
