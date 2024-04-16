@@ -35,7 +35,7 @@ export default async function og({ params }: { params: { id: string } }) {
         ...size,
       }
     )
-
+    console.log("OGP画像",imageResponse)
     return imageResponse
 
   } catch (error) {
