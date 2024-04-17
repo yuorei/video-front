@@ -20,6 +20,10 @@ export async function generateMetadata(
     title: video?.title || 'YuoVision',
     description: video?.description || 'YuoVision',
     openGraph: {
+      title: video?.title || 'YuoVision',
+      description: video?.description || 'YuoVision',
+      type: 'website',
+      url: `https://yuovision.yuorei.com/video/${id}`,
       images: [video?.thumbnailImageURL|| 'https://yuovision.yuorei.com/opengraph-image.png'],
     },
     twitter: {
@@ -30,6 +34,7 @@ export async function generateMetadata(
       creator: '@yuorei71',
       images: [video?.thumbnailImageURL|| 'https://yuovision.yuorei.com/opengraph-image.png'],
     },
+    
   }
 }
 
