@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
-    <html lang="en">
+    <html lang="ja">
       <body className={inter.className}>
         <WithApolloProvider>
           <div className="flex flex-col justify-between w-full h-full min-h-screen">
