@@ -4,25 +4,31 @@ import CustomLink from "./custom-link";
 import { useEffect, useState } from "react";
 
 export default function UploadVideoButton() {
-    const [token, setToken] = useState("");
+  const [token, setToken] = useState("");
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            // localStorageからトークンを取得し、状態にセットします
-            const storedToken = localStorage.getItem('token');
-            if (storedToken) {
-                setToken(storedToken);
-            } else {
-                console.log("token not found");
-            }
-        }
-    }, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // localStorageからトークンを取得し、状態にセットします
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        setToken(storedToken);
+      } else {
+        console.log("token not found");
+      }
+    }
+  }, []);
 
-    return (
-        <CustomLink href={!token ? "/login" : "/video/upload"}>
-            <Button variant="ghost" className="bg-black border border-white text-white font-bold py-2 px-4 rounded">
-                動画アップロード
-            </Button>
-        </CustomLink>
-    );
+  return (
+    // aダグだと、再レンダリングが発生するため、CustomLinkコンポーネントを使用します
+    <CustomLink href={!token ? "/login" : "/video/upload"}>
+      <div className="flex items-center p-2 rounded-lg hover:bg-gray-700 group">
+        <img
+          src="/upload_video.svg"
+          alt="Login"
+          className="w-6 h-6 rounded-full "
+        />
+        <span className="ml-2 text-white font-bold">アップロード</span>
+      </div>
+    </CustomLink>
+  );
 }

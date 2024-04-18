@@ -109,6 +109,7 @@ export default function Page() {
       <div className="p-8 bg-gray-800 shadow-lg rounded-lg max-w-md w-full">
         <h1 className="text-2xl font-semibold text-white text-center mb-4">ビデオアップロード</h1>
         <div>
+          <h2 className="text-lg font-semibold text-white mb-4">動画を選択</h2>
           <div className="mb-4">
             <input
               type="file"
@@ -121,6 +122,7 @@ export default function Page() {
               <video src={videoPreview} className="mt-4 w-full" controls />
             )}
           </div>
+          <h2 className="text-lg font-semibold text-white mb-4">サムネイル画像を選択</h2>
           <div className="mb-4">
             <input
               type="file"
