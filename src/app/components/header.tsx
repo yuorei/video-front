@@ -68,21 +68,29 @@ export default function Header() {
               <ul className="space-y-2 font-medium">
                 <li>
                   <CustomLink href="/">
-                    <div className="flex items-center p-2 rounded-lg hover:bg-gray-700 group">
-                      <img
-                        src="/home.svg"
-                        alt="Home"
-                        className="w-6 h-6 rounded-full "
-                      />
-                      <span className="ml-2 text-white font-bold">ホーム</span>
-                    </div>
+                    <button onClick={toggleNavigation}>
+                      <div className="flex items-center p-2 rounded-lg hover:bg-gray-700 group">
+                        <img
+                          src="/home.svg"
+                          alt="Home"
+                          className="w-6 h-6 rounded-full "
+                        />
+                        <span className="ml-2 text-white font-bold">
+                          ホーム
+                        </span>
+                      </div>
+                    </button>
                   </CustomLink>
                 </li>
                 <li>
-                  <UploadVideo />
+                  <button onClick={toggleNavigation}>
+                    <UploadVideo />
+                  </button>
                 </li>
                 <li>
-                  <Login />
+                  <button onClick={toggleNavigation}>
+                    <Login />
+                  </button>
                 </li>
               </ul>
             </div>
