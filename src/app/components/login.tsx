@@ -1,12 +1,10 @@
-import { Button } from "./ui/button"
-import CustomLink from "./custom-link"
-
 export default function Login() {
-    return (
-        <CustomLink href="/login">
-            <Button variant="ghost" className="bg-black border border-white text-white font-bold py-2 px-4 rounded">
-                ログイン
-            </Button>
-        </CustomLink>
-    )
+  return (
+    <a href="/login">
+      <div className="flex items-center p-2 rounded-lg hover:bg-gray-700 group">
+        <img src="/login.svg" alt="Login" className="w-6 h-6 rounded-full " />
+        <span className="ml-2 text-white font-bold">ログイン</span>
+      </div>
+    </a>
+  );
 }
