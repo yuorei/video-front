@@ -182,7 +182,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads }) => {
   const decimalPoint = 0;
   return (
     <div>
-      <div className="relative">
+      <div className="">
         <video className="w-full" ref={videoRef} autoPlay />
         {isAltVideo ? (
           <p className="absolute top-0 left-0 bg-black text-white px-2 py-1">広告再生中</p>
