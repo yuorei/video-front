@@ -1,15 +1,15 @@
-'use client';
-import HLSPlayer from '@/app/components/HLSPlayer';
-import { gql } from '@apollo/client';
-import { useQuery } from '@apollo/client';
-import { GetVideoQueryData } from '@/app/model/video';
+"use client";
+import HLSPlayer from "@/app/components/HLSPlayer";
+import { gql } from "@apollo/client";
+import { useQuery } from "@apollo/client";
+import { GetVideoQueryData } from "@/app/model/video";
 import AllVideoVertical from "@/app/components/all-video-vertical";
 import Comments from "@/app/components/comment";
 import LoadingPage from "@/app/components/loading";
 import ErrorPage from "@/app/components/error";
 import { Ad } from "@/app/components/HLSPlayer";
-import VideoHeader from './VideoHeader';
-import React from 'react'
+import VideoHeader from "./VideoHeader";
+import React from "react";
 
 const GET_VIDEO_QUERY = gql`
   query GetVideo($id: ID!) {
@@ -28,18 +28,30 @@ const GET_VIDEO_QUERY = gql`
 `;
 
 export default function VideoPage({ params }: { params: { id: string } }) {
-
-  const { loading: videoLoading, error: videoError, data: videoData } = useQuery<GetVideoQueryData>(GET_VIDEO_QUERY, {
+  const {
+    loading: videoLoading,
+    error: videoError,
+    data: videoData,
+  } = useQuery<GetVideoQueryData>(GET_VIDEO_QUERY, {
     variables: { id: params.id },
   });
 
   if (videoLoading) return <LoadingPage />;
-  if (videoError || videoError || !videoData) return <ErrorPage errorMessage={videoError?.message || "不明なエラー"} />;
+  if (videoError || videoError || !videoData)
+    return <ErrorPage errorMessage={videoError?.message || "不明なエラー"} />;
 
   // Temporary advertisement data
   const ads: Ad[] = [
-    { adURL: "https://video-storage.yuorei.com/video/output_video_4d30ee62-eb87-11ee-b465-0242ac110002.m3u8", adTiming: 0 },
-    { adURL: "https://video-storage.yuorei.com/video/output_video_4d30ee62-eb87-11ee-b465-0242ac110002.m3u8", adTiming: 60 },
+    {
+      adURL:
+        "https://video-storage.yuorei.com/video/output_video_4d30ee62-eb87-11ee-b465-0242ac110002.m3u8",
+      adTiming: 0,
+    },
+    {
+      adURL:
+        "https://video-storage.yuorei.com/video/output_video_4d30ee62-eb87-11ee-b465-0242ac110002.m3u8",
+      adTiming: 60,
+    },
   ];
 
   return (
@@ -54,4 +66,4 @@ export default function VideoPage({ params }: { params: { id: string } }) {
       <AllVideoVertical videoID={params.id} />
     </div>
   );
-};
+}

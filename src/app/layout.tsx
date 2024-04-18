@@ -1,16 +1,15 @@
-import "./globals.css"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import Footer from "@/app/components/footer"
-import Header from "@/app/components/header"
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import Footer from "@/app/components/footer";
+import Header from "@/app/components/header";
 import { WithApolloProvider } from "./providers/WithApolloProvider";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "YuoVision",
-  description:
-    `YuoVisionは、動画の視聴とアップロードが可能な動画配信プラットフォームです。
+  description: `YuoVisionは、動画の視聴とアップロードが可能な動画配信プラットフォームです。
     あなたの動画をアップロードして、世界中の人々と共有しましょう。新しい発見をYuoVisionでシェアし、一緒に新しい世界を探求しましょう。`,
   openGraph: {
     type: "website",
@@ -26,13 +25,14 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'YuoVision',
-    description: 'YuoVisionは、動画の視聴とアップロードが可能な動画配信プラットフォームです。',
-    site: '@yuovision',
-    creator: '@yuorei71',
+    card: "summary_large_image",
+    title: "YuoVision",
+    description:
+      "YuoVisionは、動画の視聴とアップロードが可能な動画配信プラットフォームです。",
+    site: "@yuovision",
+    creator: "@yuorei71",
   },
-}
+};
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
@@ -49,6 +49,5 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         </WithApolloProvider>
       </body>
     </html>
-  )
+  );
 }
-

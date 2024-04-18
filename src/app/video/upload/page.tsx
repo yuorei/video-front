@@ -1,7 +1,7 @@
-'use client'
-import { useState } from 'react';
-import { useMutation } from '@apollo/client';
-import { gql } from '@apollo/client';
+"use client";
+import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 
 interface UploadVideoData {
   UploadVideo: {
@@ -57,10 +57,10 @@ export default function Page() {
       [name]: files ? files[0] : value,
     });
 
-    if (name === 'thumbnailImage' && files) {
+    if (name === "thumbnailImage" && files) {
       const file = files[0];
       setImagePreview(URL.createObjectURL(file));
-    } else if (name === 'video' && files) {
+    } else if (name === "video" && files) {
       const file = files[0];
       setVideoPreview(URL.createObjectURL(file));
     }
@@ -80,25 +80,28 @@ export default function Page() {
         },
         context: {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         },
       });
 
-      console.log('アップロード成功:', data?.UploadVideo.id);
+      console.log("アップロード成功:", data?.UploadVideo.id);
       // 投稿した動画のページに移動
       window.location.href = `/video/${data?.UploadVideo.id}`;
     } catch (error) {
-      let errorSting = error as string
-      console.log(errorSting)
+      let errorSting = error as string;
+      console.log(errorSting);
       if (errorSting == "ApolloError: id is nil") {
         // /loginに移動
-        alert("再度ログインしてください")
-        window.location.href = '/login';
-        return
+        alert("再度ログインしてください");
+        window.location.href = "/login";
+        return;
       }
-      alert(errorSting)
-      console.error('アップロードエラー:', errorSting == "ApolloError: id is nil");
+      alert(errorSting);
+      console.error(
+        "アップロードエラー:",
+        errorSting == "ApolloError: id is nil"
+      );
     } finally {
       setLoading(false); // ローディングを終了
     }
@@ -107,7 +110,9 @@ export default function Page() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
       <div className="p-8 bg-gray-800 shadow-lg rounded-lg max-w-md w-full">
-        <h1 className="text-2xl font-semibold text-white text-center mb-4">ビデオアップロード</h1>
+        <h1 className="text-2xl font-semibold text-white text-center mb-4">
+          ビデオアップロード
+        </h1>
         <div>
           <h2 className="text-lg font-semibold text-white mb-4">動画を選択</h2>
           <div className="mb-4">
@@ -122,7 +127,9 @@ export default function Page() {
               <video src={videoPreview} className="mt-4 w-full" controls />
             )}
           </div>
-          <h2 className="text-lg font-semibold text-white mb-4">サムネイル画像を選択</h2>
+          <h2 className="text-lg font-semibold text-white mb-4">
+            サムネイル画像を選択
+          </h2>
           <div className="mb-4">
             <input
               type="file"
@@ -132,7 +139,11 @@ export default function Page() {
               onChange={handleInputChange}
             />
             {imagePreview && (
-              <img src={imagePreview} alt="プロファイル画像プレビュー" className="mt-4  object-cover " />
+              <img
+                src={imagePreview}
+                alt="プロファイル画像プレビュー"
+                className="mt-4  object-cover "
+              />
             )}
           </div>
           <div className="mb-4">
@@ -157,11 +168,14 @@ export default function Page() {
           </div>
           <button
             onClick={handleUpload}
-            className={`w-full px-4 py-2 text-white ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-              } rounded-md focus:outline-none focus:bg-blue-700`}
+            className={`w-full px-4 py-2 text-white ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            } rounded-md focus:outline-none focus:bg-blue-700`}
             disabled={loading}
           >
-            {loading ? 'アップロード中...' : 'アップロード'}
+            {loading ? "アップロード中..." : "アップロード"}
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
-import { gql } from '@apollo/client';
-import { client } from '@/app/apollo/client'
-import { GetVideoQueryData } from '@/app/model/video';
+import { gql } from "@apollo/client";
+import { client } from "@/app/apollo/client";
+import { GetVideoQueryData } from "@/app/model/video";
 
 const GET_VIDEO_QUERY = gql`
   query GetVideo($id: ID!) {
@@ -20,7 +20,7 @@ const GET_VIDEO_QUERY = gql`
 `;
 
 export async function getVideo({ id }: { id: string }) {
-const apolloClient = client
+  const apolloClient = client;
   try {
     const { data } = await apolloClient.query<GetVideoQueryData>({
       query: GET_VIDEO_QUERY,
@@ -28,7 +28,7 @@ const apolloClient = client
     });
     return data.video;
   } catch (error) {
-    console.error('Error fetching video:', error);
+    console.error("Error fetching video:", error);
     return null;
   }
 }

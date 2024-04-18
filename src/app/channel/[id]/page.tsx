@@ -1,8 +1,8 @@
-'use client'
-import  { useEffect, useState } from "react";
+"use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { gql } from '@apollo/client';
-import { useQuery, useMutation } from '@apollo/client';
+import { gql } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { GetUserResponse, GetUserVariables } from "@/app/model/user";
 import { Video as videoInterface } from "@/app/model/video";
 import Link from "next/link";
@@ -69,22 +69,36 @@ export default function Video({ params }: { params: { id: string } }) {
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   const handleLogin = () => {
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
-  const { loading: uploaderLoading, error: uploaderError, data: uploaderData } = useQuery<GetUserResponse, GetUserVariables>(GET_USER, {
+  const {
+    loading: uploaderLoading,
+    error: uploaderError,
+    data: uploaderData,
+  } = useQuery<GetUserResponse, GetUserVariables>(GET_USER, {
     variables: { id: params.id },
   });
 
-  const { loading: userLoading, error: userError, data: userData, refetch: userRefetch } = useQuery(GET_USER_BY_AUTH);
+  const {
+    loading: userLoading,
+    error: userError,
+    data: userData,
+    refetch: userRefetch,
+  } = useQuery(GET_USER_BY_AUTH);
 
   useEffect(() => {
     if (userData && uploaderData) {
-      setIsSubscribed(userData.userByAuth?.subscribechannelids.includes(uploaderData.user.id));
+      setIsSubscribed(
+        userData.userByAuth?.subscribechannelids.includes(uploaderData.user.id)
+      );
     }
   }, [userData, uploaderData]);
 
-  const handleSubscriptionChange = async (channelID: string, subscribe: boolean) => {
+  const handleSubscriptionChange = async (
+    channelID: string,
+    subscribe: boolean
+  ) => {
     try {
       const response = subscribe
         ? await subscribeChannel({ variables: { channelID } })
@@ -108,14 +122,17 @@ export default function Video({ params }: { params: { id: string } }) {
       setIsMobile(window.innerWidth <= 1280);
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     // コンポーネントのアンマウント時にイベントリスナーを削除
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   if (uploaderLoading || userLoading) return <LoadingPage />;
-  if (uploaderError || !uploaderData) return <ErrorPage errorMessage={uploaderError?.message || "不明なエラー"} />;
+  if (uploaderError || !uploaderData)
+    return (
+      <ErrorPage errorMessage={uploaderError?.message || "不明なエラー"} />
+    );
 
   return (
     <main>
@@ -129,28 +146,34 @@ export default function Video({ params }: { params: { id: string } }) {
             className="rounded-full mr-4 object-cover"
           />
           <div>
-            <h3 className="text-white font-semibold text-xl">{uploaderData.user.name}</h3>
-            <p className="text-gray-400">{uploaderData.user.videos.length} 本の動画</p>
+            <h3 className="text-white font-semibold text-xl">
+              {uploaderData.user.name}
+            </h3>
+            <p className="text-gray-400">
+              {uploaderData.user.videos.length} 本の動画
+            </p>
             <div className="mt-2">
-              {
-                userData ?
-                  (
-                    <button
-                      className={`${isSubscribed ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'
-                        } text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out`}
-                      onClick={() => handleSubscriptionChange(params.id, !isSubscribed)}
-                    >
-                      {isSubscribed ? '登録済み' : 'チャンネル登録'}
-                    </button>
-                  )
-                  :
-                  <button
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out"
-                    onClick={handleLogin}
-                  >
-                    ログイン
-                  </button>
-              }
+              {userData ? (
+                <button
+                  className={`${
+                    isSubscribed
+                      ? "bg-red-500 hover:bg-red-600"
+                      : "bg-blue-500 hover:bg-blue-600"
+                  } text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out`}
+                  onClick={() =>
+                    handleSubscriptionChange(params.id, !isSubscribed)
+                  }
+                >
+                  {isSubscribed ? "登録済み" : "チャンネル登録"}
+                </button>
+              ) : (
+                <button
+                  className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out"
+                  onClick={handleLogin}
+                >
+                  ログイン
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -168,8 +191,12 @@ export default function Video({ params }: { params: { id: string } }) {
                 />
                 <div className="p-4 flex items-center">
                   <div>
-                    <h3 className="text-white font-semibold text-lg break-words">{video.title}</h3>
-                    <p className="text-gray-400 text-sm">{timeAgo(video.createdAt)}</p>
+                    <h3 className="text-white font-semibold text-lg break-words">
+                      {video.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm">
+                      {timeAgo(video.createdAt)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -179,4 +206,4 @@ export default function Video({ params }: { params: { id: string } }) {
       </div>
     </main>
   );
-};
+}

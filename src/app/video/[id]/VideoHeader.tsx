@@ -1,12 +1,12 @@
-'use client'
-import Image from 'next/image';
-import { GetVideoQueryData } from '@/app/model/video';
-import CustomLink from '@/app/components/custom-link';
-import { whenTimeAgo } from '@/app/lib/time';
-import { gql } from '@apollo/client';
-import { useQuery, useMutation } from '@apollo/client';
-import { useState, useEffect } from 'react';
-import LoadingPage from '@/app/components/loading';
+"use client";
+import Image from "next/image";
+import { GetVideoQueryData } from "@/app/model/video";
+import CustomLink from "@/app/components/custom-link";
+import { whenTimeAgo } from "@/app/lib/time";
+import { gql } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
+import { useState, useEffect } from "react";
+import LoadingPage from "@/app/components/loading";
 
 const SUBSCRIBE_CHANNEL = gql`
   mutation SubscribeChannel($channelID: ID!) {
@@ -36,26 +36,36 @@ const GET_USER_BY_AUTH = gql`
 `;
 
 interface VideoHeaderProps {
-  video: GetVideoQueryData['video'];
+  video: GetVideoQueryData["video"];
 }
 
 export default function VideoHeader({ video }: VideoHeaderProps) {
   const [subscribeChannel] = useMutation(SUBSCRIBE_CHANNEL);
   const [unSubscribeChannel] = useMutation(UNSUBSCRIBE_CHANNEL);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const { loading: userLoading, error: userError, data: userData, refetch: userRefetch } = useQuery(GET_USER_BY_AUTH);
+  const {
+    loading: userLoading,
+    error: userError,
+    data: userData,
+    refetch: userRefetch,
+  } = useQuery(GET_USER_BY_AUTH);
 
   useEffect(() => {
     if (userData) {
-      setIsSubscribed(userData.userByAuth?.subscribechannelids.includes(video?.uploader.id));
+      setIsSubscribed(
+        userData.userByAuth?.subscribechannelids.includes(video?.uploader.id)
+      );
     }
   }, [userData]);
 
   const handleLogin = () => {
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
-  const handleSubscriptionChange = async (channelID: string, subscribe: boolean) => {
+  const handleSubscriptionChange = async (
+    channelID: string,
+    subscribe: boolean
+  ) => {
     try {
       const response = subscribe
         ? await subscribeChannel({ variables: { channelID } })
@@ -81,7 +91,13 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
       <h1 className="text-2xl font-bold">{video.title}</h1>
       <div className="flex items-center mt-4">
         <CustomLink href={`/channel/${video.uploader.id}`}>
-          <Image src={video.uploader.profileImageURL} alt={video.uploader.name} className="w-10 h-10 rounded-full" width={100} height={100} />
+          <Image
+            src={video.uploader.profileImageURL}
+            alt={video.uploader.name}
+            className="w-10 h-10 rounded-full"
+            width={100}
+            height={100}
+          />
         </CustomLink>
         <CustomLink href={`/channel/${video.uploader.id}`}>
           <div className="ml-2">
@@ -93,12 +109,14 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
             <button
               className={`${
                 isSubscribed
-                  ? 'bg-red-500 hover:bg-red-700'
-                  : 'bg-blue-500 hover:bg-blue-700'
+                  ? "bg-red-500 hover:bg-red-700"
+                  : "bg-blue-500 hover:bg-blue-700"
               } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
-              onClick={() => handleSubscriptionChange(video.uploader.id, !isSubscribed)}
+              onClick={() =>
+                handleSubscriptionChange(video.uploader.id, !isSubscribed)
+              }
             >
-              {isSubscribed ? '登録済み' : 'チャンネル登録'}
+              {isSubscribed ? "登録済み" : "チャンネル登録"}
             </button>
           ) : (
             <button
