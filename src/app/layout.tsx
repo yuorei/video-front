@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import Footer from "@/app/components/footer";
 import Header from "@/app/components/header";
 import { WithApolloProvider } from "./providers/WithApolloProvider";
+import GoogleAnalytics from "@/app/components/GoogleAnalytics/GoogleAnalytics";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,6 +38,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="ja">
+      <head>
+        <GoogleAnalytics />
+      </head>
       <body className={inter.className}>
         <WithApolloProvider>
           <div className="flex flex-col justify-between w-full h-full min-h-screen">
