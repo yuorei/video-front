@@ -1,5 +1,5 @@
 "use client";
-
+import { Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Script from "next/script";
 import { useEffect } from "react";
@@ -11,11 +11,11 @@ const GoogleAnalytics = () => {
 
   useEffect(() => {
     if (!IS_GATAG) {
-      return
+      return;
     }
-    const url = pathname + searchParams.toString()
-    pageview(url)
-  }, [pathname, searchParams])
+    const url = pathname + searchParams.toString();
+    pageview(url);
+  }, [pathname, searchParams]);
 
   return (
     <>
@@ -37,4 +37,10 @@ const GoogleAnalytics = () => {
   );
 };
 
-export default GoogleAnalytics;
+export default function GoogleAnalyticsWrapper() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <GoogleAnalytics />
+    </Suspense>
+  );
+}
