@@ -8,25 +8,25 @@ import LoadingPage from "./loading";
 
 export default function AllVideo() {
   const GET_VIDEOS_QUERY = gql`
-  query GetVideos {
-    videos {
-      id
-      videoURL
-      title
-      thumbnailImageURL
-      createdAt
-      uploader {
+    query GetVideos {
+      videos {
         id
-        name
-        profileImageURL
+        videoURL
+        title
+        thumbnailImageURL
+        createdAt
+        uploader {
+          id
+          name
+          profileImageURL
+        }
       }
     }
-  }
-`;
+  `;
 
   const { loading, error, data } = useQuery(GET_VIDEOS_QUERY);
   if (loading) return <LoadingPage />;
-  if (error) return <ErrorPage errorMessage={error.message} />
+  if (error) return <ErrorPage errorMessage={error.message} />;
   return (
     <main>
       <div className="space-y-2">
@@ -53,9 +53,15 @@ export default function AllVideo() {
                     />
                   </Link>
                   <div>
-                    <h3 className="text-white font-semibold text-lg break-words">{video.title}</h3>
-                    <p className="text-gray-400 break-words">{video.uploader.name}</p>
-                    <p className="text-gray-400 text-sm">{timeAgo(video.createdAt)}</p>
+                    <h3 className="text-white font-semibold text-lg break-words">
+                      {video.title}
+                    </h3>
+                    <p className="text-gray-400 break-words">
+                      {video.uploader.name}
+                    </p>
+                    <p className="text-gray-400 text-sm">
+                      {timeAgo(video.createdAt)}
+                    </p>
                   </div>
                 </div>
               </div>
