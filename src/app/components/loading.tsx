@@ -15,8 +15,8 @@ const LoadingPage: React.FC = () => {
         </div>
         <div className="w-full h-1/3 sm:w-auto sm:h-auto top-0">
           <img
-            className="w-full h-full object-cover pointer-events-none"
-            src="/loading.png"
+            className="object-cover pointer-events-none"
+            src="/logo.png"
             alt="Loading"
           />
         </div>

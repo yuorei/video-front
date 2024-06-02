@@ -22,7 +22,7 @@ export function MainNav() {
       <CustomLink href="/">
         <Button variant="ghost" className="p-0">
           <Image src="/logo.jpg" alt="Home" width="32" height="32" />
-          <Image src="/logo.png" alt="Home" width="180" height="100" />
+          <Image src="/logo_text.png" alt="Home" width="180" height="100" />
         </Button>
       </CustomLink>
     </div>
