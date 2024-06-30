@@ -13,7 +13,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky flex justify-center border-b">
+    <header className="sticky flex justify-center border-b z-50">
       <div className="flex items-center justify-between w-full h-16 px-4 mx-auto sm:px-6">
         <div className="text-center">
           <button type="button" onClick={toggleNavigation}>
@@ -24,7 +24,7 @@ export default function Header() {
         {isNavOpen && (
           <div
             id="drawer-navigation"
-            className="fixed top-0 left-0 z-50 h-screen p-4 overflow-y-auto transition-transform  bg-white w-64 dark:bg-gray-800" //-translate-x-full
+            className="fixed top-0 left-0 z-50 h-screen p-4 overflow-y-auto transition-transform  w-64 bg-gray-800" //-translate-x-full
             tabIndex={-1}
             aria-labelledby="drawer-navigation-label"
           >
