@@ -18,3 +18,7 @@ export interface Uploader {
 export type GetVideoQueryData = {
     video: Video;
 };
+
+export type GetVideosQueryData = {
+    videos: Video[];
+};

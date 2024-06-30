@@ -1,32 +1,10 @@
 import { Video } from "@/app/model/video";
 import Link from "next/link";
 import Image from "next/image";
-import { useQuery, gql } from "@apollo/client";
 import { timeAgo } from "@/app/lib/time";
-import ErrorPage from "./error";
-import LoadingPage from "./loading";
 
-export default function AllVideo() {
-  const GET_VIDEOS_QUERY = gql`
-    query GetVideos {
-      videos {
-        id
-        videoURL
-        title
-        thumbnailImageURL
-        createdAt
-        uploader {
-          id
-          name
-          profileImageURL
-        }
-      }
-    }
-  `;
-
-  const { loading, error, data } = useQuery(GET_VIDEOS_QUERY);
-  if (loading) return <LoadingPage />;
-  if (error) return <ErrorPage errorMessage={error.message} />;
+//  Videoの配列を受け取る
+export default function AllVideo(data: { videos: Video[] }) {
   return (
     <main>
       <div className="space-y-2">
