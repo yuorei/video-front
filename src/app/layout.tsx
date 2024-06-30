@@ -45,7 +45,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         <WithApolloProvider>
           <div className="flex flex-col justify-between w-full h-full min-h-screen">
             <Header />
-            <main className="flex-auto  w-full px-10 py-4 mx-auto sm:px-6 md:py-6">
+            <main className="flex-auto  w-full py-4 mx-auto sm:px-6 md:py-6">
               {children}
             </main>
             <Footer />

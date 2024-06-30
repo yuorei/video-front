@@ -39,7 +39,7 @@ const GoogleAnalytics = () => {
 
 export default function GoogleAnalyticsWrapper() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense>
       <GoogleAnalytics />
     </Suspense>
   );
