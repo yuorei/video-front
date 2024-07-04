@@ -22,6 +22,9 @@ const documents = {
     "\n  mutation RegisterUser($input: UserInput!) {\n    registerUser(input: $input) {\n      id\n      name\n    }\n  }\n": types.RegisterUserDocument,
     "\n  query GetVideos {\n    videos {\n      ...VideoFragment\n    }\n  }\n": types.GetVideosDocument,
     "\n  fragment VideoFragment on Video {\n    id\n    videoURL\n    title\n    thumbnailImageURL\n    description\n    Tags\n    isPrivate\n    isAdult\n    isExternalCutout\n    # ads {\n    #     id\n    #     title\n    # }\n    isAd\n    createdAt\n    updatedAt\n    uploader {\n      id\n      name\n      profileImageURL\n    }\n  }\n": types.VideoFragmentFragmentDoc,
+    "\n  query GetVideo($id: ID!) {\n    video(id: $id) {\n      ...GetVideoFragment\n    }\n  }\n": types.GetVideoDocument,
+    "\n  fragment GetVideoFragment on Video {\n    id\n    videoURL\n    title\n    thumbnailImageURL\n    description\n    Tags\n    isPrivate\n    isAdult\n    isExternalCutout\n    # ads {\n    #     id\n    #     title\n    # }\n    isAd\n    createdAt\n    updatedAt\n    uploader {\n      id\n      name\n      profileImageURL\n    }\n  }\n": types.GetVideoFragmentFragmentDoc,
+    "\n  query GetVideoSSR($id: ID!) {\n    video(id: $id) {\n      videoURL\n      title\n      description\n      createdAt\n      thumbnailImageURL\n      uploader {\n        id\n        name\n        profileImageURL\n      }\n    }\n  }\n": types.GetVideoSsrDocument,
     "\n  mutation UploadVideo($input: UploadVideoInput!) {\n    UploadVideo(input: $input) {\n      id\n      videoURL\n      title\n      thumbnailImageURL\n      description\n      createdAt\n      updatedAt\n      uploader {\n        id\n        name\n      }\n    }\n  }\n": types.UploadVideoDocument,
 };
 
@@ -75,6 +78,18 @@ export function graphql(source: "\n  query GetVideos {\n    videos {\n      ...V
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  fragment VideoFragment on Video {\n    id\n    videoURL\n    title\n    thumbnailImageURL\n    description\n    Tags\n    isPrivate\n    isAdult\n    isExternalCutout\n    # ads {\n    #     id\n    #     title\n    # }\n    isAd\n    createdAt\n    updatedAt\n    uploader {\n      id\n      name\n      profileImageURL\n    }\n  }\n"): (typeof documents)["\n  fragment VideoFragment on Video {\n    id\n    videoURL\n    title\n    thumbnailImageURL\n    description\n    Tags\n    isPrivate\n    isAdult\n    isExternalCutout\n    # ads {\n    #     id\n    #     title\n    # }\n    isAd\n    createdAt\n    updatedAt\n    uploader {\n      id\n      name\n      profileImageURL\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetVideo($id: ID!) {\n    video(id: $id) {\n      ...GetVideoFragment\n    }\n  }\n"): (typeof documents)["\n  query GetVideo($id: ID!) {\n    video(id: $id) {\n      ...GetVideoFragment\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment GetVideoFragment on Video {\n    id\n    videoURL\n    title\n    thumbnailImageURL\n    description\n    Tags\n    isPrivate\n    isAdult\n    isExternalCutout\n    # ads {\n    #     id\n    #     title\n    # }\n    isAd\n    createdAt\n    updatedAt\n    uploader {\n      id\n      name\n      profileImageURL\n    }\n  }\n"): (typeof documents)["\n  fragment GetVideoFragment on Video {\n    id\n    videoURL\n    title\n    thumbnailImageURL\n    description\n    Tags\n    isPrivate\n    isAdult\n    isExternalCutout\n    # ads {\n    #     id\n    #     title\n    # }\n    isAd\n    createdAt\n    updatedAt\n    uploader {\n      id\n      name\n      profileImageURL\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetVideoSSR($id: ID!) {\n    video(id: $id) {\n      videoURL\n      title\n      description\n      createdAt\n      thumbnailImageURL\n      uploader {\n        id\n        name\n        profileImageURL\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetVideoSSR($id: ID!) {\n    video(id: $id) {\n      videoURL\n      title\n      description\n      createdAt\n      thumbnailImageURL\n      uploader {\n        id\n        name\n        profileImageURL\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
