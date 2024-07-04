@@ -1,30 +1,31 @@
 "use client";
 import Image from "next/image";
-import { GetVideoQueryData } from "@/app/model/video";
 import CustomLink from "@/app/components/custom-link";
 import { whenTimeAgo } from "@/app/lib/time";
-import { gql } from "@apollo/client";
+
 import { useQuery, useMutation } from "@apollo/client";
 import { useState, useEffect } from "react";
 import LoadingPage from "@/app/components/loading";
+import { graphql } from "@/app/gql";
+import { GetVideoFragmentFragment } from "@/app/gql/graphql";
 
-const SUBSCRIBE_CHANNEL = gql`
+const SUBSCRIBE_CHANNEL = graphql(/* GraphQL */ `
   mutation SubscribeChannel($channelID: ID!) {
     subscribeChannel(input: { channelID: $channelID }) {
       isSuccess
     }
   }
-`;
+`);
 
-const UNSUBSCRIBE_CHANNEL = gql`
+const UNSUBSCRIBE_CHANNEL = graphql(/* GraphQL */ `
   mutation UnSubscribeChannel($channelID: ID!) {
     unSubscribeChannel(input: { channelID: $channelID }) {
       isSuccess
     }
   }
-`;
+`);
 
-const GET_USER_BY_AUTH = gql`
+const GET_USER_BY_AUTH = graphql(/* GraphQL */ `
   query GetUserByAuth {
     userByAuth {
       id
@@ -33,10 +34,10 @@ const GET_USER_BY_AUTH = gql`
       subscribechannelids
     }
   }
-`;
+`);
 
 interface VideoHeaderProps {
-  video: GetVideoQueryData["video"];
+  video: GetVideoFragmentFragment;
 }
 
 export default function VideoHeader({ video }: VideoHeaderProps) {
@@ -70,11 +71,11 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
       const response = subscribe
         ? await subscribeChannel({ variables: { channelID } })
         : await unSubscribeChannel({ variables: { channelID } });
-      if (subscribe && response.data.subscribeChannel.isSuccess) {
+      if (subscribe && response.data) {
         console.log("Subscribed successfully");
         setIsSubscribed(true);
         userRefetch();
-      } else if (!subscribe && response.data.unSubscribeChannel.isSuccess) {
+      } else if (!subscribe && response.data) {
         console.log("Unsubscribed successfully");
         setIsSubscribed(false);
         userRefetch();

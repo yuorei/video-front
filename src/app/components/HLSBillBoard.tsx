@@ -1,13 +1,12 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 import Hls from "hls.js";
-import { Video } from "@/app/model/video";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import BillBoardPlayButton from "./BillBoardPlayButton";
-
+import { VideoFragmentFragment } from "@/app/gql/graphql";
 
 interface HLSPlayerProps {
-  billBoardVideo: Video;
+  billBoardVideo: VideoFragmentFragment;
 }
 
 const HLSBillBoard: React.FC<HLSPlayerProps> = ({ billBoardVideo }) => {
@@ -84,7 +83,7 @@ const HLSBillBoard: React.FC<HLSPlayerProps> = ({ billBoardVideo }) => {
           {billBoardVideo.description}
         </p>
         <div className="flex flex-row items-center mt-3 md:mt-4 gap-3">
-        <BillBoardPlayButton movieId={billBoardVideo.id} />
+          <BillBoardPlayButton movieId={billBoardVideo.id} />
           <button
             className="
             bg-white

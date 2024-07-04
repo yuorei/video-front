@@ -1,15 +1,18 @@
-import { Video } from "@/app/model/video";
 import Link from "next/link";
 import Image from "next/image";
 import { timeAgo } from "@/app/lib/time";
+import { VideoFragmentFragment } from "@/app/gql/graphql";
 
-//  Videoの配列を受け取る
-export default function AllVideo(data: { videos: Video[] }) {
+export default function AllVideo({
+  videos,
+}: {
+  videos: VideoFragmentFragment[];
+}) {
   return (
     <main>
       <div className="space-y-2">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {data.videos.map((video: Video) => (
+          {videos.map((video: VideoFragmentFragment) => (
             <Link href={`/video/${video.id}`} key={video.id}>
               <div className="bg-black rounded-lg shadow-md overflow-hidden">
                 <Image
