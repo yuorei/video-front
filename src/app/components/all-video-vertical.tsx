@@ -27,7 +27,7 @@ export default function AllVideoVertical({ videoID }: Props) {
   }, []);
 
   const GET_VIDEOS_QUERY = gql`
-    query GetVideos {
+    query GetVideosVertical {
       videos {
         id
         videoURL
