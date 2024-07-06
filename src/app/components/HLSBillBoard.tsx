@@ -35,6 +35,10 @@ const HLSBillBoard: React.FC<HLSPlayerProps> = ({ billBoardVideo }) => {
     }
   }, [billBoardVideo.videoURL]);
 
+  if (!billBoardVideo) {
+    return null;
+  }
+
   return (
     <div className="relative h-[56.25vw]">
       <video
