@@ -17,7 +17,7 @@ const getVideosDocument = graphql(/* GraphQL */ `
   }
 `);
 
-export const homePageVideosFragment = graphql(/* GraphQL */ `
+const homePageVideosFragment = graphql(/* GraphQL */ `
   fragment VideoFragment on Video {
     id
     videoURL
@@ -45,12 +45,13 @@ export const homePageVideosFragment = graphql(/* GraphQL */ `
 
 export default function Index() {
   const { loading, error, data } = useQuery(getVideosDocument);
+  const videos = useFragment(homePageVideosFragment, data?.videos);
   if (loading) return <LoadingPage />;
   if (error) return <ErrorPage errorMessage={error.message} />;
-  if (!data) return <ErrorPage errorMessage="データが見つかりませんでした" />;
+  if (!videos) return <ErrorPage errorMessage="データが見つかりませんでした" />;
 
-  const num = getRandomArbitrary(0, data.videos.length);
-  const videos = useFragment(homePageVideosFragment, data.videos);
+  const num = getRandomArbitrary(0, videos.length);
+
   return (
     <div className="max-w-full">
       <HLSBillBoard billBoardVideo={videos[num]} />

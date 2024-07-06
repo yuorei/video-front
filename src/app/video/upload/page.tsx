@@ -10,6 +10,11 @@ interface UploadVideoData {
     title: string;
     thumbnailImageURL: string;
     description: string;
+    tags: string[];
+    isPrivate: boolean;
+    isAdult: boolean;
+    isExternalCutout: boolean;
+    isAds: boolean;
     createdAt: string;
     updatedAt: string;
     uploader: {
@@ -48,15 +53,25 @@ export default function Page() {
     thumbnailImage: null,
     title: "",
     description: "",
+    tags: "",
+    isPrivate: false,
+    isAdult: false,
+    isExternalCutout: false,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: files ? files[0] : value,
-    });
-
+    const { name, value, files, type, checked } = e.target;
+    if (type === "checkbox") {
+      setFormData({
+        ...formData,
+        [name]: checked,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: files ? files[0] : value,
+      });
+    }
     if (name === "thumbnailImage" && files) {
       const file = files[0];
       setImagePreview(URL.createObjectURL(file));
@@ -68,7 +83,9 @@ export default function Page() {
 
   const handleUpload = async () => {
     setLoading(true);
+    const tags = formData.tags.split("#");
     try {
+      console.log("フォーム", formData);
       const { data } = await uploadVideo({
         variables: {
           input: {
@@ -76,6 +93,11 @@ export default function Page() {
             thumbnailImage: formData.thumbnailImage,
             title: formData.title,
             description: formData.description,
+            tags: tags.filter((tag) => tag !== ""),
+            isPrivate: formData.isPrivate,
+            isAdult: formData.isAdult,
+            isExternalCutout: formData.isExternalCutout,
+            isAds: false,
           },
         },
         context: {
@@ -165,6 +187,49 @@ export default function Page() {
               className="block w-full p-3 border border-gray-600 rounded-md bg-gray-700 text-white"
               onChange={handleInputChange}
             />
+          </div>
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="タグ"
+              name="tags"
+              value={formData.tags}
+              className="block w-full p-3 border border-gray-600 rounded-md bg-gray-700 text-white"
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-300">
+              <input
+                type="checkbox"
+                name="isPrivate"
+                className="mr-2"
+                onChange={handleInputChange}
+              />
+              非公開にする
+            </label>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-300">
+              <input
+                type="checkbox"
+                name="isAdult"
+                className="mr-2"
+                onChange={handleInputChange}
+              />
+              アダルトコンテンツ
+            </label>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-300">
+              <input
+                type="checkbox"
+                name="isExternalCutout"
+                className="mr-2"
+                onChange={handleInputChange}
+              />
+              外部カットアウト
+            </label>
           </div>
           <button
             onClick={handleUpload}

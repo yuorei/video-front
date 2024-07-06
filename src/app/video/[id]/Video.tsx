@@ -49,13 +49,13 @@ export default function VideoPage({ params }: { params: { id: string } }) {
   const { loading, error, data } = useQuery(getVideosDocument, {
     variables: { id: params.id },
   });
-
+  const video = useFragment(homePageVideosFragment, data?.video);
   if (loading) return <LoadingPage />;
-  if (error || !data)
+  if (error || !video)
     return <ErrorPage errorMessage={error?.message || "不明なエラー"} />;
 
   // Temporary advertisement data
-  const video = useFragment(homePageVideosFragment, data.video);
+
   const ads: Ad[] = [
     {
       adURL:
