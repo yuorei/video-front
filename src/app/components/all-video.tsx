@@ -41,7 +41,7 @@ export default function AllVideo({
                       {video.uploader.name}
                     </p>
                     <p className="text-gray-400 text-sm">
-                      {timeAgo(video.createdAt)}
+                      {video.watchCount} 回視聴・{timeAgo(video.createdAt)}
                     </p>
                   </div>
                 </div>

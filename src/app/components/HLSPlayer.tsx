@@ -11,6 +11,9 @@ import {
   Camera,
   Scissors,
 } from "lucide-react";
+import { GetVideoFragmentFragment } from "@/app/gql/graphql";
+import { useMutation } from "@apollo/client";
+import { graphql } from "@/app/gql";
 
 export interface Ad {
   adURL: string;
@@ -20,9 +23,18 @@ export interface Ad {
 interface HLSPlayerProps {
   src: string;
   ads: Ad[];
+  video: GetVideoFragmentFragment;
 }
 
-const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads }) => {
+const incrementWatchCountDocument = graphql(/* GraphQL */ `
+  mutation IncrementWatchCount($input: IncrementWatchCountInput!) {
+    IncrementWatchCount(input: $input) {
+      watchCount
+    }
+  }
+`);
+
+const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -36,6 +48,34 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads }) => {
   const [currentTime2, setCurrentTime2] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
+  const [isCounted, setIsCounted] = useState(false);
+
+  const [IncrementWatchCount] = useMutation(incrementWatchCountDocument);
+
+  useEffect(() => {
+    if (!isCounted && video) {
+      try {
+        if (localStorage.getItem("clientID") === null) {
+          localStorage.setItem(
+            "clientID",
+            "client" + "_" + crypto.randomUUID()
+          );
+        }
+        IncrementWatchCount({
+          variables: {
+            input: {
+              VideoID: video.id,
+              UserID: localStorage.getItem("clientID") as string,
+            },
+          },
+        });
+
+        setIsCounted(true);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [isCounted, video, IncrementWatchCount, video.id]);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);

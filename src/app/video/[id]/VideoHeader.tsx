@@ -130,7 +130,10 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
         </div>
       </div>
       <div className="bg-zinc-600 mt-2 rounded-lg p-4">
-        <p className="text-sm text-white">{whenTimeAgo(video.createdAt)}</p>
+        <div className="flex items-center gap-4">
+          <p className="text-sm text-white">{video.watchCount} 回視聴</p>
+          <p className="text-sm text-white">{whenTimeAgo(video.createdAt)}</p>
+        </div>
         <p className="text-white">{video.description}</p>
       </div>
     </div>
