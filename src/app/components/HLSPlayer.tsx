@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Hls from "hls.js";
 import {
   Play,
@@ -11,6 +11,9 @@ import {
   Camera,
   Scissors,
 } from "lucide-react";
+import { GetVideoFragmentFragment } from "@/app/gql/graphql";
+import { useMutation, useLazyQuery } from "@apollo/client";
+import { graphql } from "@/app/gql";
 
 export interface Ad {
   adURL: string;
@@ -20,9 +23,64 @@ export interface Ad {
 interface HLSPlayerProps {
   src: string;
   ads: Ad[];
+  video: GetVideoFragmentFragment;
 }
 
-const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads }) => {
+const incrementWatchCountDocument = graphql(/* GraphQL */ `
+  mutation IncrementWatchCount($input: IncrementWatchCountInput!) {
+    IncrementWatchCount(input: $input) {
+      watchCount
+    }
+  }
+`);
+
+const trimVideoDocument = graphql(/* GraphQL */ `
+  query CutVideo($input: CutVideoInput!) {
+    cutVideo(input: $input) {
+      cutVideoURL
+    }
+  }
+`);
+
+const useTrimVideo = (videoId: string) => {
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [endTime, setEndTime] = useState<number | null>(null);
+  const [trimVideo, { loading, error, data }] = useLazyQuery(trimVideoDocument);
+
+  useEffect(() => {
+    if (startTime !== null && endTime !== null) {
+      trimVideo({
+        variables: {
+          input: {
+            VideoID: videoId,
+            StartTime: Math.ceil(startTime),
+            EndTime: Math.ceil(endTime),
+          },
+        },
+      });
+    }
+  }, [startTime, endTime, trimVideo, videoId]);
+
+  useEffect(() => {
+    if (loading) console.log("Loading...");
+    if (error) alert("トリミングに失敗しました: " + error);
+    if (data && data.cutVideo && data.cutVideo.cutVideoURL) {
+      const a = document.createElement("a");
+      a.href = data.cutVideo.cutVideoURL;
+      a.download = "trimmed-video.mp4";
+      a.click();
+    }
+  }, [loading, error, data]);
+
+  const handleTrim = useCallback((start: number, end: number) => {
+    setStartTime(start);
+    setEndTime(end);
+  }, []);
+
+  return handleTrim;
+};
+
+const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -36,6 +94,52 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads }) => {
   const [currentTime2, setCurrentTime2] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
+  const [isCounted, setIsCounted] = useState(false);
+  const [IncrementWatchCount] = useMutation(incrementWatchCountDocument);
+  const [showTrimModal, setShowTrimModal] = useState(false);
+  const [trimStart, setTrimStart] = useState("0");
+  const [trimEnd, setTrimEnd] = useState("0");
+
+  // const handleTrim = (startTime: number, endTime: number) => {
+  //   useTrimVideo(video.id, startTime, endTime);
+  // };
+  const handleTrim = useTrimVideo(video.id);
+
+  const handleTrimButtonClick = () => {
+    setTrimStart("0");
+    setTrimEnd(videoRef.current?.currentTime.toFixed(2) ?? "0");
+    setShowTrimModal(true);
+  };
+
+  const handleTrimConfirm = () => {
+    handleTrim(parseFloat(trimStart), parseFloat(trimEnd));
+    setShowTrimModal(false);
+  };
+
+  useEffect(() => {
+    if (!isCounted && video) {
+      try {
+        if (localStorage.getItem("clientID") === null) {
+          localStorage.setItem(
+            "clientID",
+            "client" + "_" + crypto.randomUUID()
+          );
+        }
+        IncrementWatchCount({
+          variables: {
+            input: {
+              VideoID: video.id,
+              UserID: localStorage.getItem("clientID") as string,
+            },
+          },
+        });
+
+        setIsCounted(true);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [isCounted, video, IncrementWatchCount, video.id]);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -235,11 +339,6 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads }) => {
     }
   };
 
-  const handleTrim = () => {
-    // TODO: トリミング機能の実装をサーバーが完成したら追加
-    console.log("Trim video at", formatTime(currentTime));
-  };
-
   return (
     <div
       ref={containerRef}
@@ -338,11 +437,64 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads }) => {
                 </button>
                 <button
                   className="text-white hover:text-blue-400 transition-colors"
-                  onClick={handleTrim}
+                  onClick={handleTrimButtonClick}
                   title="動画をトリミング"
                 >
                   <Scissors size={20} />
                 </button>
+                {showTrimModal && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-96">
+                      <h2 className="text-xl font-bold mb-4">
+                        動画をトリミング
+                      </h2>
+                      <div className="mb-4">
+                        <label
+                          htmlFor="trimStart"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                          開始時間
+                        </label>
+                        <input
+                          id="trimStart"
+                          type="number"
+                          value={trimStart}
+                          onChange={(e) => setTrimStart(e.target.value)}
+                          className="w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          htmlFor="trimEnd"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                          終了時間
+                        </label>
+                        <input
+                          id="trimEnd"
+                          type="number"
+                          value={trimEnd}
+                          onChange={(e) => setTrimEnd(e.target.value)}
+                          className="w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div className="flex justify-end space-x-2">
+                        <button
+                          onClick={() => setShowTrimModal(false)}
+                          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        >
+                          キャンセル
+                        </button>
+                        <button
+                          onClick={handleTrimConfirm}
+                          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          トリミングを実行
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {isPiPSupported && (
                   <button
                     className="text-white hover:text-blue-400 transition-colors"

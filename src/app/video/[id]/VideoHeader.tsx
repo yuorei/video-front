@@ -112,7 +112,7 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
                 isSubscribed
                   ? "bg-red-500 hover:bg-red-700"
                   : "bg-blue-500 hover:bg-blue-700"
-              } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
+              } ml-4 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
               onClick={() =>
                 handleSubscriptionChange(video.uploader.id, !isSubscribed)
               }
@@ -121,7 +121,7 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
             </button>
           ) : (
             <button
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="ml-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               onClick={handleLogin}
             >
               ログイン
@@ -130,7 +130,10 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
         </div>
       </div>
       <div className="bg-zinc-600 mt-2 rounded-lg p-4">
-        <p className="text-sm text-white">{whenTimeAgo(video.createdAt)}</p>
+        <div className="flex items-center gap-4">
+          <p className="text-sm text-white">{video.watchCount} 回視聴</p>
+          <p className="text-sm text-white">{whenTimeAgo(video.createdAt)}</p>
+        </div>
         <p className="text-white">{video.description}</p>
       </div>
     </div>
