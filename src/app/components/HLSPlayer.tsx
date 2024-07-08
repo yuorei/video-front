@@ -1,6 +1,16 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
+import {
+  Play,
+  Pause,
+  Volume2,
+  PictureInPicture,
+  FastForward,
+  Maximize,
+  Camera,
+  Scissors,
+} from "lucide-react";
 
 export interface Ad {
   adURL: string;
@@ -8,19 +18,68 @@ export interface Ad {
 }
 
 interface HLSPlayerProps {
-  src: string; // 元の動画URL
-  ads: Ad[]; // 広告情報の配列
+  src: string;
+  ads: Ad[];
 }
 
 const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [volume, setVolume] = useState(1); // 初期音量は最大値である1としています
+  const [volume, setVolume] = useState(1);
   const [isPiPSupported, setIsPiPSupported] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isAltVideo, setIsAltVideo] = useState(false);
   const [isAdPlayed, setIsAdPlayed] = useState(false);
   const [currentTime2, setCurrentTime2] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showControls, setShowControls] = useState(true);
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    const hideControls = () => {
+      timer = setTimeout(() => {
+        setShowControls(false);
+      }, 3000); // 3秒後にコントロールを非表示
+    };
+
+    const showControlsOnMove = () => {
+      setShowControls(true);
+      clearTimeout(timer);
+      hideControls();
+    };
+
+    if (containerRef.current) {
+      containerRef.current.addEventListener("mousemove", showControlsOnMove);
+      containerRef.current.addEventListener("touchstart", showControlsOnMove);
+    }
+
+    hideControls();
+
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.removeEventListener(
+          "mousemove",
+          showControlsOnMove
+        );
+        containerRef.current.removeEventListener(
+          "touchstart",
+          showControlsOnMove
+        );
+      }
+      clearTimeout(timer);
+    };
+  }, []);
 
   // クエリパラメーターから再生時間指定
   useEffect(() => {
@@ -87,7 +146,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads }) => {
         hls.loadSource(isAltVideo ? ads[currentTime2].adURL : src);
         hls.attachMedia(video);
       } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-        // HLS support for platforms like Safari
+        // HLS support for platforms
         video.src = isAltVideo ? ads[currentTime2].adURL : src;
       }
 
@@ -140,126 +199,173 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads }) => {
     if (video) {
       if (video.paused) {
         video.play();
+        setIsPlaying(true);
       } else {
         video.pause();
+        setIsPlaying(false);
       }
     }
   };
 
-  // 倍速の変更ハンドラ
-  const handlePlaybackRateChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const newPlaybackRate = parseFloat(event.target.value);
-    setPlaybackRate(newPlaybackRate);
-    if (videoRef.current) {
-      videoRef.current.playbackRate = newPlaybackRate;
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
     }
   };
 
-  // 音量の変更ハンドラ
-  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(event.target.value);
-    setVolume(newVolume);
-    if (videoRef.current) {
-      videoRef.current.volume = newVolume;
-    }
-  };
-
-  // PiPモード
-  const enterPiP = () => {
-    if (videoRef.current) {
-      videoRef.current.requestPictureInPicture();
-    }
-  };
-
-  // フルスクリーン
-  const enterFullscreen = () => {
+  const captureScreenshot = () => {
     const video = videoRef.current;
     if (video) {
-      if (video.requestFullscreen) {
-        video.requestFullscreen();
-      }
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas
+        .getContext("2d")
+        ?.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const screenshot = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = screenshot;
+      link.download = "screenshot.png";
+      link.click();
     }
   };
 
-  const decimalPoint = 0;
+  const handleTrim = () => {
+    // TODO: トリミング機能の実装をサーバーが完成したら追加
+    console.log("Trim video at", formatTime(currentTime));
+  };
+
   return (
-    <div>
-      <div className="">
-        <video className="w-full" ref={videoRef} autoPlay />
-        {isAltVideo ? (
-          <p className="absolute top-0 left-0 bg-black text-white px-2 py-1">
+    <div
+      ref={containerRef}
+      className="max-w-4xl mx-auto bg-gray-900 rounded-lg overflow-hidden shadow-xl relative"
+    >
+      <div className="relative">
+        <video
+          className="w-full aspect-video cursor-pointer"
+          ref={videoRef}
+          autoPlay
+          onClick={handlePlayPause}
+          onLoadedMetadata={() => setDuration(videoRef.current?.duration || 0)}
+        />
+        {isAltVideo && (
+          <div className="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 m-2 rounded-md text-sm font-semibold">
             広告再生中
-          </p>
-        ) : null}
-      </div>
-      <div className="p-4 flex flex-col md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center">
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-            onClick={handlePlayPause}
-          >
-            {/* TODO: SVGにする */}
-            {videoRef.current?.paused ? "→" : "||"}
-          </button>
-          <p className="text-gray-600 ml-2">
-            {currentTime.toFixed(decimalPoint)}/
-            {videoRef.current?.duration.toFixed(decimalPoint)}
-          </p>
-        </div>
-        {/* 音量設定 */}
-        {/* <input
-          type="range"
-          className="mt-2 w-full md:w-2/3"
-          min="0"
-          max="1"
-          step="0.01"
-          value={volume}
-          onChange={handleVolumeChange}
-        /> */}
-        {!isAltVideo ? (
-          <input
-            type="range"
-            className="mt-2 w-full"
-            min="0"
-            max={videoRef.current?.duration || 0}
-            step="1"
-            value={currentTime}
-            onChange={handleTimeChange}
-          />
-        ) : null}
-        {!isAltVideo ? (
-          <div className="flex items-center mt-4 md:mt-0">
-            <select
-              className="selectbox-6 appearance-none min-w-230px h-11 px-4 py-1 border border-gray-300 rounded-full bg-white text-gray-700 font-normal text-sm cursor-pointer"
-              value={playbackRate}
-              onChange={handlePlaybackRateChange}
-            >
-              <option value={0.25}>0.25倍速</option>
-              <option value={0.5}>0.5倍速</option>
-              <option value={1}>標準</option>
-              <option value={1.5}>1.5倍速</option>
-              <option value={2}>2倍速</option>
-              <option value={2.5}>2.5倍速</option>
-              <option value={3}>3倍速</option>
-            </select>
           </div>
-        ) : null}
-      </div>
-      <div className="flex justify-center">
-        {isPiPSupported && (
-          <button
-            className="mt-4 mr-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
-            onClick={enterPiP}
-          >
-            PiP
-          </button>
         )}
-        {/* コンソールが有効になってしまう */}
-        {/* <button className="px-4 py-2 bg-blue-500 text-white rounded-lg" onClick={enterFullscreen}>全画面</button> */}
+        {showControls && (
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+            {!isAltVideo && (
+              <div className="flex items-center space-x-2 mb-2">
+                <input
+                  type="range"
+                  className="w-full h-1 accent-blue-500 appearance-none bg-gray-300 rounded-full overflow-hidden"
+                  min="0"
+                  max={duration}
+                  value={currentTime}
+                  onChange={(e) => {
+                    const newTime = parseFloat(e.target.value);
+                    setCurrentTime(newTime);
+                    if (videoRef.current)
+                      videoRef.current.currentTime = newTime;
+                  }}
+                  style={{
+                    background: `linear-gradient(to right, #3B82F6 0%, #3B82F6 ${
+                      (currentTime / duration) * 100
+                    }%, #D1D5DB ${
+                      (currentTime / duration) * 100
+                    }%, #D1D5DB 100%)`,
+                  }}
+                />
+                <div className="text-white text-sm font-mono whitespace-nowrap">
+                  {formatTime(currentTime)} / {formatTime(duration)}
+                </div>
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <button
+                  className="text-white hover:text-blue-400 transition-colors"
+                  onClick={handlePlayPause}
+                >
+                  {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+                </button>
+                <Volume2 size={20} className="text-white" />
+                <input
+                  type="range"
+                  className="w-24 accent-blue-500"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={volume}
+                  onChange={(e) => {
+                    const newVolume = parseFloat(e.target.value);
+                    setVolume(newVolume);
+                    if (videoRef.current) videoRef.current.volume = newVolume;
+                  }}
+                />
+              </div>
+              <div className="flex items-center space-x-4">
+                {!isAltVideo && (
+                  <select
+                    className="bg-transparent text-white text-sm border border-white rounded px-2 py-1"
+                    value={playbackRate}
+                    onChange={(e) => {
+                      const newRate = parseFloat(e.target.value);
+                      setPlaybackRate(newRate);
+                      if (videoRef.current)
+                        videoRef.current.playbackRate = newRate;
+                    }}
+                  >
+                    {[0.25, 0.5, 1, 1.5, 2, 2.5, 3].map((rate) => (
+                      <option key={rate} value={rate} className="text-black">
+                        {rate}x
+                      </option>
+                    ))}
+                  </select>
+                )}
+                <button
+                  className="text-white hover:text-blue-400 transition-colors"
+                  onClick={captureScreenshot}
+                  title="スクリーンショットを撮る"
+                >
+                  <Camera size={20} />
+                </button>
+                <button
+                  className="text-white hover:text-blue-400 transition-colors"
+                  onClick={handleTrim}
+                  title="動画をトリミング"
+                >
+                  <Scissors size={20} />
+                </button>
+                {isPiPSupported && (
+                  <button
+                    className="text-white hover:text-blue-400 transition-colors"
+                    onClick={() => videoRef.current?.requestPictureInPicture()}
+                    title="ピクチャーインピクチャー"
+                  >
+                    <PictureInPicture size={20} />
+                  </button>
+                )}
+                <button
+                  className="text-white hover:text-blue-400 transition-colors"
+                  onClick={toggleFullscreen}
+                  title="全画面表示"
+                >
+                  <Maximize size={20} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
 export default HLSPlayer;

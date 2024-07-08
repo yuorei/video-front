@@ -54,14 +54,22 @@ const LoginForm: React.FC = () => {
       const loginData: Response = await response.json();
       localStorage.setItem("token", loginData.id_token);
       console.log("Login success:", localStorage.getItem("token"));
-      registerUser({ variables: { input: { name: username } } })
+      registerUser({
+        variables: {
+          input: {
+            name: username,
+            isSubscribed: false,
+            role: "NORMAL",
+          },
+        },
+      })
         .then((response) => {
           // 登録成功時の処理
           console.log("登録成功:", response.data);
           window.location.href = "/";
         })
         .catch((err) => {
-          if (!err.message.includes("duplicate key")) {
+          if (!err.message.includes("Duplicate")) {
             localStorage.removeItem("token");
             alert("エラーが発生しました。もう一度ログインしてください。");
             return;
@@ -75,7 +83,7 @@ const LoginForm: React.FC = () => {
   };
 
   if (loading) return <LoadingPage />;
-  if (error && !error.message.includes("duplicate key"))
+  if (error && !error.message.includes("Duplicate"))
     return <ErrorPage errorMessage={error.message} />;
 
   return (

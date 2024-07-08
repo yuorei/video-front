@@ -3,7 +3,7 @@ import { client } from "@/app/apollo/client";
 import { GetVideoQueryData } from "@/app/model/video";
 
 const GET_VIDEO_QUERY = gql`
-  query GetVideo($id: ID!) {
+  query GetVideoSSR($id: ID!) {
     video(id: $id) {
       videoURL
       title

@@ -1,8 +1,6 @@
 "use client";
 import HLSPlayer from "@/app/components/HLSPlayer";
-import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client";
-import { GetVideoQueryData } from "@/app/model/video";
 import AllVideoVertical from "@/app/components/all-video-vertical";
 import Comments from "@/app/components/comment";
 import LoadingPage from "@/app/components/loading";
@@ -10,37 +8,54 @@ import ErrorPage from "@/app/components/error";
 import { Ad } from "@/app/components/HLSPlayer";
 import VideoHeader from "./VideoHeader";
 import React from "react";
+import { graphql } from "@/app/gql";
+import { useFragment } from "@/app/gql/fragment-masking";
 
-const GET_VIDEO_QUERY = gql`
+const getVideosDocument = graphql(/* GraphQL */ `
   query GetVideo($id: ID!) {
     video(id: $id) {
-      videoURL
-      title
-      description
-      createdAt
-      uploader {
-        id
-        name
-        profileImageURL
-      }
+      ...GetVideoFragment
     }
   }
-`;
+`);
+
+export const homePageVideosFragment = graphql(/* GraphQL */ `
+  fragment GetVideoFragment on Video {
+    id
+    videoURL
+    title
+    thumbnailImageURL
+    description
+    Tags
+    isPrivate
+    isAdult
+    isExternalCutout
+    # ads {
+    #     id
+    #     title
+    # }
+    isAd
+    createdAt
+    updatedAt
+    uploader {
+      id
+      name
+      profileImageURL
+    }
+  }
+`);
 
 export default function VideoPage({ params }: { params: { id: string } }) {
-  const {
-    loading: videoLoading,
-    error: videoError,
-    data: videoData,
-  } = useQuery<GetVideoQueryData>(GET_VIDEO_QUERY, {
+  const { loading, error, data } = useQuery(getVideosDocument, {
     variables: { id: params.id },
   });
-
-  if (videoLoading) return <LoadingPage />;
-  if (videoError || videoError || !videoData)
-    return <ErrorPage errorMessage={videoError?.message || "不明なエラー"} />;
+  const video = useFragment(homePageVideosFragment, data?.video);
+  if (loading) return <LoadingPage />;
+  if (error || !video)
+    return <ErrorPage errorMessage={error?.message || "不明なエラー"} />;
 
   // Temporary advertisement data
+
   const ads: Ad[] = [
     {
       adURL:
@@ -58,9 +73,9 @@ export default function VideoPage({ params }: { params: { id: string } }) {
     <div className="flex items-start gap-4 xl:flex-row flex-col">
       <div className="bg-black shadow-lg rounded-lg overflow-hidden">
         <div className="bg-black rounded-lg overflow-hidden shadow-lg mx-auto">
-          <HLSPlayer src={videoData.video.videoURL} ads={ads} />
+          <HLSPlayer src={video.videoURL} ads={ads} />
         </div>
-        <VideoHeader video={videoData.video} />
+        <VideoHeader video={video} />
         <Comments videoID={params.id} />
       </div>
       <AllVideoVertical videoID={params.id} />

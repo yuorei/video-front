@@ -1,37 +1,18 @@
-import { Video } from "@/app/model/video";
 import Link from "next/link";
 import Image from "next/image";
-import { useQuery, gql } from "@apollo/client";
 import { timeAgo } from "@/app/lib/time";
-import ErrorPage from "./error";
-import LoadingPage from "./loading";
+import { VideoFragmentFragment } from "@/app/gql/graphql";
 
-export default function AllVideo() {
-  const GET_VIDEOS_QUERY = gql`
-    query GetVideos {
-      videos {
-        id
-        videoURL
-        title
-        thumbnailImageURL
-        createdAt
-        uploader {
-          id
-          name
-          profileImageURL
-        }
-      }
-    }
-  `;
-
-  const { loading, error, data } = useQuery(GET_VIDEOS_QUERY);
-  if (loading) return <LoadingPage />;
-  if (error) return <ErrorPage errorMessage={error.message} />;
+export default function AllVideo({
+  videos,
+}: {
+  videos: VideoFragmentFragment[];
+}) {
   return (
     <main>
       <div className="space-y-2">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {data.videos.map((video: Video) => (
+          {videos.map((video: VideoFragmentFragment) => (
             <Link href={`/video/${video.id}`} key={video.id}>
               <div className="bg-black rounded-lg shadow-md overflow-hidden">
                 <Image
