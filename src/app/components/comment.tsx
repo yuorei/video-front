@@ -24,7 +24,7 @@ const COMMENTS_BY_VIDEO = gql`
 `;
 
 const POST_COMMENT = gql`
-  mutation PostComment2($input: PostCommentInput!) {
+  mutation PostComment($input: PostCommentInput!) {
     postComment(input: $input) {
       id
       text

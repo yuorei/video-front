@@ -7,7 +7,6 @@ export interface Video {
     createdAt: string
     updatedAt: string
     uploader: Uploader
-    watchCount: number
 }
 
 export interface Uploader {

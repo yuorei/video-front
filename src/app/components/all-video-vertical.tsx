@@ -34,7 +34,6 @@ export default function AllVideoVertical({ videoID }: Props) {
         title
         thumbnailImageURL
         createdAt
-        watchCount
         uploader {
           id
           name
@@ -87,7 +86,7 @@ export default function AllVideoVertical({ videoID }: Props) {
                             {video.uploader.name}
                           </p>
                           <p className="text-gray-400 text-sm">
-                          {video.watchCount} 回視聴・{timeAgo(video.createdAt)}
+                            {timeAgo(video.createdAt)}
                           </p>
                         </div>
                       </div>

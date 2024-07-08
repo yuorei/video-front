@@ -1,5 +1,4 @@
 "use client";
-import React, { useState, useEffect } from "react";
 import HLSPlayer from "@/app/components/HLSPlayer";
 import { useQuery } from "@apollo/client";
 import AllVideoVertical from "@/app/components/all-video-vertical";
@@ -8,8 +7,9 @@ import LoadingPage from "@/app/components/loading";
 import ErrorPage from "@/app/components/error";
 import { Ad } from "@/app/components/HLSPlayer";
 import VideoHeader from "./VideoHeader";
-import { useFragment } from "@/app/gql/fragment-masking";
+import React from "react";
 import { graphql } from "@/app/gql";
+import { useFragment } from "@/app/gql/fragment-masking";
 
 const getVideosDocument = graphql(/* GraphQL */ `
   query GetVideo($id: ID!) {
@@ -37,7 +37,6 @@ export const homePageVideosFragment = graphql(/* GraphQL */ `
     isAd
     createdAt
     updatedAt
-    watchCount
     uploader {
       id
       name
@@ -74,7 +73,7 @@ export default function VideoPage({ params }: { params: { id: string } }) {
     <div className="flex items-start gap-4 xl:flex-row flex-col">
       <div className="bg-black shadow-lg rounded-lg overflow-hidden">
         <div className="bg-black rounded-lg overflow-hidden shadow-lg mx-auto">
-          <HLSPlayer src={video.videoURL} ads={ads} video={video} />
+          <HLSPlayer src={video.videoURL} ads={ads} />
         </div>
         <VideoHeader video={video} />
         <Comments videoID={params.id} />

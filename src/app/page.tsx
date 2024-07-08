@@ -35,7 +35,6 @@ const homePageVideosFragment = graphql(/* GraphQL */ `
     isAd
     createdAt
     updatedAt
-    watchCount
     uploader {
       id
       name
