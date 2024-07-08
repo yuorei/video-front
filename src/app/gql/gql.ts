@@ -17,6 +17,8 @@ const documents = {
     "\n  mutation UnSubscribeChannel($channelID: ID!) {\n    unSubscribeChannel(input: { channelID: $channelID }) {\n      isSuccess\n    }\n  }\n": types.UnSubscribeChannelDocument,
     "\n  query GetUser($id: ID!) {\n    user(id: $id) {\n      id\n      name\n      profileImageURL\n      subscribechannelids\n      videos {\n        id\n        videoURL\n        title\n        thumbnailImageURL\n        description\n        createdAt\n        uploader {\n          id\n          name\n          profileImageURL\n        }\n      }\n    }\n  }\n": types.GetUserDocument,
     "\n  query GetUserByAuth {\n    userByAuth {\n      id\n      name\n      profileImageURL\n      subscribechannelids\n    }\n  }\n": types.GetUserByAuthDocument,
+    "\n  mutation IncrementWatchCount($input: IncrementWatchCountInput!) {\n    IncrementWatchCount(input: $input) {\n      watchCount\n    }\n  }\n": types.IncrementWatchCountDocument,
+    "\n  query CutVideo($input: CutVideoInput!) {\n    cutVideo(input: $input) {\n      cutVideoURL\n    }\n  }\n": types.CutVideoDocument,
     "\n    query GetVideosVertical {\n      videos {\n        id\n        videoURL\n        title\n        thumbnailImageURL\n        createdAt\n        watchCount\n        uploader {\n          id\n          name\n          profileImageURL\n        }\n      }\n    }\n  ": types.GetVideosVerticalDocument,
     "\n  query CommentsByVideo($videoID: ID!) {\n    commentsByVideo(videoID: $videoID) {\n      id\n      text\n      createdAt\n      updatedAt\n      user {\n        id\n        name\n        profileImageURL\n      }\n    }\n  }\n": types.CommentsByVideoDocument,
     "\n  mutation PostComment($input: PostCommentInput!) {\n    postComment(input: $input) {\n      id\n      video {\n        id\n      }\n      text\n      createdAt\n      updatedAt\n      user {\n        id\n        name\n        profileImageURL\n      }\n    }\n  }\n": types.PostCommentDocument,
@@ -26,7 +28,6 @@ const documents = {
     "\n  fragment VideoFragment on Video {\n    id\n    videoURL\n    title\n    thumbnailImageURL\n    description\n    Tags\n    isPrivate\n    isAdult\n    isExternalCutout\n    # ads {\n    #     id\n    #     title\n    # }\n    isAd\n    createdAt\n    updatedAt\n    watchCount\n    uploader {\n      id\n      name\n      profileImageURL\n    }\n  }\n": types.VideoFragmentFragmentDoc,
     "\n  query GetVideo($id: ID!) {\n    video(id: $id) {\n      ...GetVideoFragment\n    }\n  }\n": types.GetVideoDocument,
     "\n  fragment GetVideoFragment on Video {\n    id\n    videoURL\n    title\n    thumbnailImageURL\n    description\n    Tags\n    isPrivate\n    isAdult\n    isExternalCutout\n    # ads {\n    #     id\n    #     title\n    # }\n    isAd\n    createdAt\n    updatedAt\n    watchCount\n    uploader {\n      id\n      name\n      profileImageURL\n    }\n  }\n": types.GetVideoFragmentFragmentDoc,
-    "\n  mutation IncrementWatchCount($input: IncrementWatchCountInput!) {\n    IncrementWatchCount(input: $input) {\n      watchCount\n    }\n  }\n": types.IncrementWatchCountDocument,
     "\n  query GetVideoSSR($id: ID!) {\n    video(id: $id) {\n      videoURL\n      title\n      description\n      createdAt\n      thumbnailImageURL\n      uploader {\n        id\n        name\n        profileImageURL\n      }\n    }\n  }\n": types.GetVideoSsrDocument,
     "\n  mutation UploadVideo($input: UploadVideoInput!) {\n    UploadVideo(input: $input) {\n      id\n      videoURL\n      title\n      thumbnailImageURL\n      description\n      createdAt\n      updatedAt\n      uploader {\n        id\n        name\n      }\n    }\n  }\n": types.UploadVideoDocument,
 };
@@ -64,6 +65,14 @@ export function graphql(source: "\n  query GetUserByAuth {\n    userByAuth {\n  
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  mutation IncrementWatchCount($input: IncrementWatchCountInput!) {\n    IncrementWatchCount(input: $input) {\n      watchCount\n    }\n  }\n"): (typeof documents)["\n  mutation IncrementWatchCount($input: IncrementWatchCountInput!) {\n    IncrementWatchCount(input: $input) {\n      watchCount\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query CutVideo($input: CutVideoInput!) {\n    cutVideo(input: $input) {\n      cutVideoURL\n    }\n  }\n"): (typeof documents)["\n  query CutVideo($input: CutVideoInput!) {\n    cutVideo(input: $input) {\n      cutVideoURL\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n    query GetVideosVertical {\n      videos {\n        id\n        videoURL\n        title\n        thumbnailImageURL\n        createdAt\n        watchCount\n        uploader {\n          id\n          name\n          profileImageURL\n        }\n      }\n    }\n  "): (typeof documents)["\n    query GetVideosVertical {\n      videos {\n        id\n        videoURL\n        title\n        thumbnailImageURL\n        createdAt\n        watchCount\n        uploader {\n          id\n          name\n          profileImageURL\n        }\n      }\n    }\n  "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -97,10 +106,6 @@ export function graphql(source: "\n  query GetVideo($id: ID!) {\n    video(id: $
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  fragment GetVideoFragment on Video {\n    id\n    videoURL\n    title\n    thumbnailImageURL\n    description\n    Tags\n    isPrivate\n    isAdult\n    isExternalCutout\n    # ads {\n    #     id\n    #     title\n    # }\n    isAd\n    createdAt\n    updatedAt\n    watchCount\n    uploader {\n      id\n      name\n      profileImageURL\n    }\n  }\n"): (typeof documents)["\n  fragment GetVideoFragment on Video {\n    id\n    videoURL\n    title\n    thumbnailImageURL\n    description\n    Tags\n    isPrivate\n    isAdult\n    isExternalCutout\n    # ads {\n    #     id\n    #     title\n    # }\n    isAd\n    createdAt\n    updatedAt\n    watchCount\n    uploader {\n      id\n      name\n      profileImageURL\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  mutation IncrementWatchCount($input: IncrementWatchCountInput!) {\n    IncrementWatchCount(input: $input) {\n      watchCount\n    }\n  }\n"): (typeof documents)["\n  mutation IncrementWatchCount($input: IncrementWatchCountInput!) {\n    IncrementWatchCount(input: $input) {\n      watchCount\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
