@@ -57,18 +57,7 @@ export default function VideoPage({ params }: { params: { id: string } }) {
 
   // Temporary advertisement data
 
-  const ads: Ad[] = [
-    // {
-    //   adURL:
-    //     "https://video-storage.yuorei.com/video/output_video_4d30ee62-eb87-11ee-b465-0242ac110002.m3u8",
-    //   adTiming: 0,
-    // },
-    // {
-    //   adURL:
-    //     "https://video-storage.yuorei.com/video/output_video_4d30ee62-eb87-11ee-b465-0242ac110002.m3u8",
-    //   adTiming: 60,
-    // },
-  ];
+  const ads: Ad[] = [];
 
   return (
     <div className="flex items-start gap-4 xl:flex-row flex-col">
