@@ -49,7 +49,7 @@ export default function Index() {
   const videos = useFragment(homePageVideosFragment, data?.videos);
   if (loading) return <LoadingPage />;
   if (error) return <ErrorPage errorMessage={error.message} />;
-  if (!videos) return <ErrorPage errorMessage="データが見つかりませんでした" />;
+  if (!videos || videos.length == 0) return <ErrorPage errorMessage="データが見つかりませんでした" />;
 
   const num = getRandomArbitrary(0, videos.length);
 

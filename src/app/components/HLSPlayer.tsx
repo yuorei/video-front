@@ -201,6 +201,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
   }, [src]);
   // 切り替えのロジック
   useEffect(() => {
+    if (ads.length === 0) return;
     const video = videoRef.current;
     if (video) {
       const switchVideo = () => {
