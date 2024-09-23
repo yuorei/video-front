@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
-  const isMaintenanceMode = true;
+  const isMaintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === "true";
   return (
     <html lang="ja">
       <head>

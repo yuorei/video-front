@@ -1,16 +1,3 @@
-// import React from 'react';
-
-// const Maintenance: React.FC = () => {
-//     return (
-//         <div>
-//             <h1>メンテナンス中</h1>
-//             <p>現在、メンテナンスを行っております。</p>
-//             <p>ご迷惑をおかけして申し訳ありません。</p>
-//         </div>
-//     );
-// };
-
-// export default Maintenance;
 import React from 'react';
 import { AlertTriangle, Calendar, Zap } from 'lucide-react';
 
