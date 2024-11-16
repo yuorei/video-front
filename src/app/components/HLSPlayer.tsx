@@ -14,6 +14,8 @@ import {
 import { GetVideoFragmentFragment } from "@/app/gql/graphql";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { graphql } from "@/app/gql";
+import Link from "next/link";
+import Image from "next/image";
 
 export interface Ad {
   adURL: string;
@@ -21,6 +23,7 @@ export interface Ad {
   adTiming: number;
   adTitle: string;
   adDescription: string;
+  adThumbnailURL: string;
 }
 
 interface HLSPlayerProps {
@@ -283,7 +286,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({
           } catch (e) {
             console.log(e);
           }
-          // }
+
           video.src = src; // 元の動画に戻す
           video.currentTime = ads[currentTime2].adTiming; //広告挿入タイミングに戻す
           setIsAltVideo(false);
@@ -419,9 +422,39 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({
           onLoadedMetadata={() => setDuration(videoRef.current?.duration || 0)}
         />
         {isAltVideo && (
-          <div className="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 m-2 rounded-md text-sm font-semibold">
-            広告再生中
-          </div>
+          <>
+            <div className="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 m-2 rounded-md text-sm font-semibold">
+              広告再生中
+            </div>
+            <div className="absolute bottom-10 left-0 bg-gray-800 bg-opacity-90 text-white p-3 m-3 rounded-md text-sm shadow-lg">
+              <div className="flex items-center space-x-2">
+                <Image
+                  src={ads[currentTime2]?.adThumbnailURL}
+                  alt="広告"
+                  width={50}
+                  height={30}
+                />
+                <div>
+                  <h3 className="font-bold">
+                    {ads[currentTime2]?.adTitle || "広告"}
+                  </h3>
+                  <p className="text-xs opacity-75">
+                    {ads[currentTime2]?.adDescription || "説明なし"}
+                  </p>
+                </div>
+                <div>
+                  <Link href={ads[currentTime2]?.adURL}>
+                    <button
+                      type="button"
+                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    >
+                      詳細
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </>
         )}
         {showControls && (
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">

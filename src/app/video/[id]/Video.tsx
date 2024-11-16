@@ -110,6 +110,7 @@ export default function VideoPage({ params }: { params: { id: string } }) {
         adTiming: 300 * count,
         adDescription: adData.description,
         adTitle: adData.title,
+        adThumbnailURL: adData.thumbnailURL,
       });
       count++;
     }
