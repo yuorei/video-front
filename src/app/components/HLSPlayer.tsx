@@ -17,7 +17,10 @@ import { graphql } from "@/app/gql";
 
 export interface Ad {
   adURL: string;
+  adVideoURL: string;
   adTiming: number;
+  adTitle: string;
+  adDescription: string;
 }
 
 interface HLSPlayerProps {
@@ -113,9 +116,6 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({
   const [trimStart, setTrimStart] = useState("0");
   const [trimEnd, setTrimEnd] = useState("0");
 
-  // const handleTrim = (startTime: number, endTime: number) => {
-  //   useTrimVideo(video.id, startTime, endTime);
-  // };
   const handleTrim = useTrimVideo(videoInfo.id);
 
   const handleTrimButtonClick = () => {
@@ -224,7 +224,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({
           !isAltVideo
         ) {
           setCurrentTime(videoRef.current?.currentTime as number);
-          video.src = ads[currentTime2].adURL; // 広告動画をセット
+          video.src = ads[currentTime2].adVideoURL; // 広告動画をセット
           setIsAltVideo(true);
           video.play();
         }
@@ -251,7 +251,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({
             watchCountAdVideo({
               variables: {
                 input: {
-                  adID: ads[currentTime2].adURL,
+                  adID: ads[currentTime2].adVideoURL,
                   city: "",
                   clientID: localStorage.getItem("clientID") as string,
                   country: "",
@@ -313,11 +313,11 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({
       const video = videoRef.current;
       if (Hls.isSupported()) {
         hls = new Hls();
-        hls.loadSource(isAltVideo ? ads[currentTime2].adURL : src);
+        hls.loadSource(isAltVideo ? ads[currentTime2].adVideoURL : src);
         hls.attachMedia(video);
       } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
         // HLS support for platforms
-        video.src = isAltVideo ? ads[currentTime2].adURL : src;
+        video.src = isAltVideo ? ads[currentTime2].adVideoURL : src;
       }
 
       return () => {

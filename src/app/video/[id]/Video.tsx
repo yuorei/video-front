@@ -46,7 +46,52 @@ export const homePageVideosFragment = graphql(/* GraphQL */ `
   }
 `);
 
+const adVideoDocument = graphql(/* GraphQL */ `
+  query AdVideo($input: AdVideoInput!) {
+    adVideo(input: $input) {
+      adID
+      adURL
+      title
+      description
+      thumbnailURL
+      videoURL
+    }
+  }
+`);
+
 export default function VideoPage({ params }: { params: { id: string } }) {
+  const {
+    loading: adLoading,
+    error: adError,
+    data: adDatas,
+  } = useQuery(adVideoDocument, {
+    variables: {
+      // TODO: 本来はクライアントIDを取得する
+      input: {
+        city: "",
+        clientID: "",
+        country: "",
+        hostname: "",
+        ipAddress: "",
+        language: "",
+        location: "",
+        networkDownlink: "",
+        networkEffectiveType: "",
+        org: "",
+        pageTitle: "",
+        platform: "",
+        postal: "",
+        referrer: "",
+        region: "",
+        timezone: "",
+        url: "",
+        userAgent: "",
+        userID: "",
+        videoID: params.id,
+      },
+    },
+  });
+
   const { loading, error, data } = useQuery(getVideosDocument, {
     variables: { id: params.id },
   });
@@ -55,9 +100,20 @@ export default function VideoPage({ params }: { params: { id: string } }) {
   if (error || !video)
     return <ErrorPage errorMessage={error?.message || "不明なエラー"} />;
 
-  // Temporary advertisement data
-
   const ads: Ad[] = [];
+  if (adDatas) {
+    let count = 0;
+    for (const adData of adDatas.adVideo) {
+      ads.push({
+        adVideoURL: adData.videoURL,
+        adURL: adData.adURL,
+        adTiming: 300 * count,
+        adDescription: adData.description,
+        adTitle: adData.title,
+      });
+      count++;
+    }
+  }
 
   return (
     <div className="flex items-start gap-4 xl:flex-row flex-col">
