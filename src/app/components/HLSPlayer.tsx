@@ -458,33 +458,31 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({
         )}
         {showControls && (
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-            {!isAltVideo && (
-              <div className="flex items-center space-x-2 mb-2">
-                <input
-                  type="range"
-                  className="w-full h-1 accent-blue-500 appearance-none bg-gray-300 rounded-full overflow-hidden"
-                  min="0"
-                  max={duration}
-                  value={currentTime}
-                  onChange={(e) => {
-                    const newTime = parseFloat(e.target.value);
-                    setCurrentTime(newTime);
-                    if (videoRef.current)
-                      videoRef.current.currentTime = newTime;
-                  }}
-                  style={{
-                    background: `linear-gradient(to right, #3B82F6 0%, #3B82F6 ${
-                      (currentTime / duration) * 100
-                    }%, #D1D5DB ${
-                      (currentTime / duration) * 100
-                    }%, #D1D5DB 100%)`,
-                  }}
-                />
-                <div className="text-white text-sm font-mono whitespace-nowrap">
-                  {formatTime(currentTime)} / {formatTime(duration)}
-                </div>
+            <div className="flex items-center space-x-2 mb-2">
+              <input
+                type="range"
+                className="w-full h-1 accent-red-500 appearance-none bg-gray-300 rounded-full overflow-hidden"
+                min="0"
+                disabled={isAltVideo}
+                max={duration}
+                value={currentTime}
+                onChange={(e) => {
+                  const newTime = parseFloat(e.target.value);
+                  setCurrentTime(newTime);
+                  if (videoRef.current) videoRef.current.currentTime = newTime;
+                }}
+                style={{
+                  background: `linear-gradient(to right, #3B82F6 0%, #3B82F6 ${
+                    (currentTime / duration) * 100
+                  }%, #D1D5DB ${
+                    (currentTime / duration) * 100
+                  }%, #D1D5DB 100%)`,
+                }}
+              />
+              <div className="text-white text-sm font-mono whitespace-nowrap">
+                {formatTime(currentTime)} / {formatTime(duration)}
               </div>
-            )}
+            </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <button
