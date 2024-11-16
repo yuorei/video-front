@@ -18,6 +18,7 @@ const documents = {
     "\n  query GetUser($id: ID!) {\n    user(id: $id) {\n      id\n      name\n      profileImageURL\n      subscribechannelids\n      videos {\n        id\n        videoURL\n        title\n        thumbnailImageURL\n        description\n        createdAt\n        uploader {\n          id\n          name\n          profileImageURL\n        }\n      }\n    }\n  }\n": types.GetUserDocument,
     "\n  query GetUserByAuth {\n    userByAuth {\n      id\n      name\n      profileImageURL\n      subscribechannelids\n    }\n  }\n": types.GetUserByAuthDocument,
     "\n  mutation IncrementWatchCount($input: IncrementWatchCountInput!) {\n    IncrementWatchCount(input: $input) {\n      watchCount\n    }\n  }\n": types.IncrementWatchCountDocument,
+    "\n  mutation WatchCountAdVideo($input: WatchCountAdVideoInput!) {\n    watchCountAdVideo(input: $input) {\n      success\n    }\n  }\n": types.WatchCountAdVideoDocument,
     "\n  query CutVideo($input: CutVideoInput!) {\n    cutVideo(input: $input) {\n      cutVideoURL\n    }\n  }\n": types.CutVideoDocument,
     "\n    query GetVideosVertical {\n      videos {\n        id\n        videoURL\n        title\n        thumbnailImageURL\n        createdAt\n        watchCount\n        uploader {\n          id\n          name\n          profileImageURL\n        }\n      }\n    }\n  ": types.GetVideosVerticalDocument,
     "\n  query CommentsByVideo($videoID: ID!) {\n    commentsByVideo(videoID: $videoID) {\n      id\n      text\n      createdAt\n      updatedAt\n      user {\n        id\n        name\n        profileImageURL\n      }\n    }\n  }\n": types.CommentsByVideoDocument,
@@ -66,6 +67,10 @@ export function graphql(source: "\n  query GetUserByAuth {\n    userByAuth {\n  
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation IncrementWatchCount($input: IncrementWatchCountInput!) {\n    IncrementWatchCount(input: $input) {\n      watchCount\n    }\n  }\n"): (typeof documents)["\n  mutation IncrementWatchCount($input: IncrementWatchCountInput!) {\n    IncrementWatchCount(input: $input) {\n      watchCount\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation WatchCountAdVideo($input: WatchCountAdVideoInput!) {\n    watchCountAdVideo(input: $input) {\n      success\n    }\n  }\n"): (typeof documents)["\n  mutation WatchCountAdVideo($input: WatchCountAdVideoInput!) {\n    watchCountAdVideo(input: $input) {\n      success\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

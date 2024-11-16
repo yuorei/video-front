@@ -18,15 +18,40 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
-export type Ad = Node & {
-  __typename?: 'Ad';
-  createdAt: Scalars['DateTime']['output'];
-  description?: Maybe<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
-  imageURL: Scalars['String']['output'];
-  link: Scalars['String']['output'];
+export type AdVideoInput = {
+  city: Scalars['String']['input'];
+  clientID: Scalars['ID']['input'];
+  country: Scalars['String']['input'];
+  hostname: Scalars['String']['input'];
+  ipAddress: Scalars['String']['input'];
+  language: Scalars['String']['input'];
+  location: Scalars['String']['input'];
+  networkDownlink?: InputMaybe<Scalars['String']['input']>;
+  networkEffectiveType?: InputMaybe<Scalars['String']['input']>;
+  org: Scalars['String']['input'];
+  pageTitle: Scalars['String']['input'];
+  platform: Scalars['String']['input'];
+  postal: Scalars['String']['input'];
+  referrer?: InputMaybe<Scalars['String']['input']>;
+  region: Scalars['String']['input'];
+  timezone: Scalars['String']['input'];
+  url: Scalars['String']['input'];
+  /** ブラウザ情報 */
+  userAgent: Scalars['String']['input'];
+  /** ユーザー情報 */
+  userID: Scalars['ID']['input'];
+  /** ビデオ情報 */
+  videoID: Scalars['ID']['input'];
+};
+
+export type AdVideoPayload = {
+  __typename?: 'AdVideoPayload';
+  adID: Scalars['ID']['output'];
+  adURL: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  thumbnailURL: Scalars['String']['output'];
   title: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  videoURL: Scalars['String']['output'];
 };
 
 export type Comment = Node & {
@@ -68,6 +93,7 @@ export type Mutation = {
   registerUser: UserPayload;
   subscribeChannel: SubscriptionPayload;
   unSubscribeChannel: SubscriptionPayload;
+  watchCountAdVideo: WatchCountAdVideoPayload;
 };
 
 
@@ -100,6 +126,11 @@ export type MutationUnSubscribeChannelArgs = {
   input?: InputMaybe<SubscribeChannelInput>;
 };
 
+
+export type MutationWatchCountAdVideoArgs = {
+  input: WatchCountAdVideoInput;
+};
+
 export type Node = {
   id: Scalars['ID']['output'];
 };
@@ -121,6 +152,7 @@ export type PostCommentPayload = {
 
 export type Query = {
   __typename?: 'Query';
+  adVideo: Array<AdVideoPayload>;
   comment: Comment;
   commentsByVideo: Array<Comment>;
   cutVideo: CutVideoPayload;
@@ -131,6 +163,11 @@ export type Query = {
   video: Video;
   videos: Array<Video>;
   watchCount: Scalars['Int']['output'];
+};
+
+
+export type QueryAdVideoArgs = {
+  input: AdVideoInput;
 };
 
 
@@ -221,7 +258,6 @@ export type UserPayload = {
 export type Video = Node & {
   __typename?: 'Video';
   Tags?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  ads?: Maybe<Array<Maybe<Ad>>>;
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
@@ -239,7 +275,6 @@ export type Video = Node & {
 
 export type VideoPayload = {
   __typename?: 'VideoPayload';
-  ads?: Maybe<Array<Maybe<Ad>>>;
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
@@ -254,6 +289,42 @@ export type VideoPayload = {
   uploader: User;
   videoURL: Scalars['String']['output'];
   watchCount: Scalars['Int']['output'];
+};
+
+export type WatchCountAdVideoInput = {
+  /** 広告情報 */
+  adID: Scalars['ID']['input'];
+  city: Scalars['String']['input'];
+  clientID: Scalars['ID']['input'];
+  country: Scalars['String']['input'];
+  description: Scalars['String']['input'];
+  hostname: Scalars['String']['input'];
+  ipAddress: Scalars['String']['input'];
+  language: Scalars['String']['input'];
+  location: Scalars['String']['input'];
+  networkDownlink?: InputMaybe<Scalars['String']['input']>;
+  networkEffectiveType?: InputMaybe<Scalars['String']['input']>;
+  org: Scalars['String']['input'];
+  pageTitle: Scalars['String']['input'];
+  platform: Scalars['String']['input'];
+  postal: Scalars['String']['input'];
+  referrer?: InputMaybe<Scalars['String']['input']>;
+  region: Scalars['String']['input'];
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
+  timezone: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  url: Scalars['String']['input'];
+  /** ブラウザ情報 */
+  userAgent: Scalars['String']['input'];
+  /** ユーザー情報 */
+  userID: Scalars['ID']['input'];
+  /** ビデオ情報 */
+  videoID: Scalars['ID']['input'];
+};
+
+export type WatchCountAdVideoPayload = {
+  __typename?: 'WatchCountAdVideoPayload';
+  success: Scalars['Boolean']['output'];
 };
 
 export type SubscribeChannelInput = {
@@ -292,6 +363,13 @@ export type IncrementWatchCountMutationVariables = Exact<{
 
 
 export type IncrementWatchCountMutation = { __typename?: 'Mutation', IncrementWatchCount: { __typename?: 'IncrementWatchCountPayload', watchCount: number } };
+
+export type WatchCountAdVideoMutationVariables = Exact<{
+  input: WatchCountAdVideoInput;
+}>;
+
+
+export type WatchCountAdVideoMutation = { __typename?: 'Mutation', watchCountAdVideo: { __typename?: 'WatchCountAdVideoPayload', success: boolean } };
 
 export type CutVideoQueryVariables = Exact<{
   input: CutVideoInput;
@@ -376,6 +454,7 @@ export const UnSubscribeChannelDocument = {"kind":"Document","definitions":[{"ki
 export const GetUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profileImageURL"}},{"kind":"Field","name":{"kind":"Name","value":"subscribechannelids"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"videoURL"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageURL"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"uploader"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profileImageURL"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUserQuery, GetUserQueryVariables>;
 export const GetUserByAuthDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserByAuth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userByAuth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profileImageURL"}},{"kind":"Field","name":{"kind":"Name","value":"subscribechannelids"}}]}}]}}]} as unknown as DocumentNode<GetUserByAuthQuery, GetUserByAuthQueryVariables>;
 export const IncrementWatchCountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IncrementWatchCount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IncrementWatchCountInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"IncrementWatchCount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"watchCount"}}]}}]}}]} as unknown as DocumentNode<IncrementWatchCountMutation, IncrementWatchCountMutationVariables>;
+export const WatchCountAdVideoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"WatchCountAdVideo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"WatchCountAdVideoInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"watchCountAdVideo"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}}]}}]}}]} as unknown as DocumentNode<WatchCountAdVideoMutation, WatchCountAdVideoMutationVariables>;
 export const CutVideoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CutVideo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CutVideoInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cutVideo"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cutVideoURL"}}]}}]}}]} as unknown as DocumentNode<CutVideoQuery, CutVideoQueryVariables>;
 export const GetVideosVerticalDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetVideosVertical"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"videoURL"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageURL"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"watchCount"}},{"kind":"Field","name":{"kind":"Name","value":"uploader"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profileImageURL"}}]}}]}}]}}]} as unknown as DocumentNode<GetVideosVerticalQuery, GetVideosVerticalQueryVariables>;
 export const CommentsByVideoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommentsByVideo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"videoID"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"commentsByVideo"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"videoID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"videoID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profileImageURL"}}]}}]}}]}}]} as unknown as DocumentNode<CommentsByVideoQuery, CommentsByVideoQueryVariables>;

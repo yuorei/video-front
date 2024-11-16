@@ -34,6 +34,14 @@ const incrementWatchCountDocument = graphql(/* GraphQL */ `
   }
 `);
 
+const watchCountAdVideoDocument = graphql(`
+  mutation WatchCountAdVideo($input: WatchCountAdVideoInput!) {
+    watchCountAdVideo(input: $input) {
+      success
+    }
+  }
+`);
+
 const trimVideoDocument = graphql(/* GraphQL */ `
   query CutVideo($input: CutVideoInput!) {
     cutVideo(input: $input) {
@@ -80,7 +88,11 @@ const useTrimVideo = (videoId: string) => {
   return handleTrim;
 };
 
-const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
+const HLSPlayer: React.FC<HLSPlayerProps> = ({
+  src,
+  ads,
+  video: videoInfo,
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -96,6 +108,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
   const [showControls, setShowControls] = useState(true);
   const [isCounted, setIsCounted] = useState(false);
   const [IncrementWatchCount] = useMutation(incrementWatchCountDocument);
+  const [watchCountAdVideo] = useMutation(watchCountAdVideoDocument);
   const [showTrimModal, setShowTrimModal] = useState(false);
   const [trimStart, setTrimStart] = useState("0");
   const [trimEnd, setTrimEnd] = useState("0");
@@ -103,7 +116,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
   // const handleTrim = (startTime: number, endTime: number) => {
   //   useTrimVideo(video.id, startTime, endTime);
   // };
-  const handleTrim = useTrimVideo(video.id);
+  const handleTrim = useTrimVideo(videoInfo.id);
 
   const handleTrimButtonClick = () => {
     setTrimStart("0");
@@ -117,7 +130,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
   };
 
   useEffect(() => {
-    if (!isCounted && video) {
+    if (!isCounted && videoInfo) {
       try {
         if (localStorage.getItem("clientID") === null) {
           localStorage.setItem(
@@ -128,7 +141,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
         IncrementWatchCount({
           variables: {
             input: {
-              VideoID: video.id,
+              VideoID: videoInfo.id,
               UserID: localStorage.getItem("clientID") as string,
             },
           },
@@ -139,7 +152,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
         console.log(e);
       }
     }
-  }, [isCounted, video, IncrementWatchCount, video.id]);
+  }, [isCounted, videoInfo, IncrementWatchCount, videoInfo.id]);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -217,8 +230,60 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
         }
       };
 
-      const onAltVideoEnd = () => {
+      const getClientIP = async (): Promise<string> => {
+        const response = await fetch("https://api.ipify.org?format=json");
+        const data = await response.json();
+        return data.ip;
+      };
+
+      const onAltVideoEnd = async () => {
         if (isAltVideo) {
+          try {
+            if (localStorage.getItem("clientID") === null) {
+              localStorage.setItem(
+                "clientID",
+                "client" + "_" + crypto.randomUUID()
+              );
+            }
+
+            const clientIP = await getClientIP();
+
+            watchCountAdVideo({
+              variables: {
+                input: {
+                  adID: ads[currentTime2].adURL,
+                  city: "",
+                  clientID: localStorage.getItem("clientID") as string,
+                  country: "",
+                  description: videoInfo.description || "",
+                  hostname: window.location.hostname,
+                  ipAddress: clientIP,
+                  language: navigator.language,
+                  location: "",
+                  networkDownlink: "",
+                  networkEffectiveType: "",
+                  org: "",
+                  pageTitle: document.title,
+                  platform: navigator.platform,
+                  postal: "",
+                  referrer: document.referrer,
+                  region: "",
+                  tags: (videoInfo.Tags as string[]) || [],
+                  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                  title: document.title,
+                  url: window.location.href,
+                  userAgent: navigator.userAgent,
+                  userID: "",
+                  videoID: videoInfo.id,
+                },
+              },
+            });
+
+            setIsCounted(true);
+          } catch (e) {
+            console.log(e);
+          }
+          // }
           video.src = src; // 元の動画に戻す
           video.currentTime = ads[currentTime2].adTiming; //広告挿入タイミングに戻す
           setIsAltVideo(false);
