@@ -145,7 +145,7 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
           <Link href={"https://twitter.com/intent/tweet?text=" + QUOTE} target="_blank">
             <XIcon size={32} round />
           </Link>
-          <LineShareButton url={URL} title={QUOTE}>
+          {/* <LineShareButton url={URL} title={QUOTE}>
             <LineIcon size={32} round />
           </LineShareButton>
           <FacebookShareButton url={URL} hashtag={QUOTE}>
@@ -158,7 +158,7 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
             windowHeight={460}
           >
             <HatenaIcon size={32} round />
-          </HatenaShareButton>
+          </HatenaShareButton> */}
         </div>
       </div>
       <div className="bg-zinc-600 mt-2 rounded-lg p-4">
