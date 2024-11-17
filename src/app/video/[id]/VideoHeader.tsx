@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import CustomLink from "@/app/components/custom-link";
+import Link from "next/link";
 import { whenTimeAgo } from "@/app/lib/time";
 
 import { useQuery, useMutation } from "@apollo/client";
@@ -8,6 +8,15 @@ import { useState, useEffect } from "react";
 import LoadingPage from "@/app/components/loading";
 import { graphql } from "@/app/gql";
 import { GetVideoFragmentFragment } from "@/app/gql/graphql";
+import {
+  FacebookShareButton,
+  HatenaShareButton,
+  LineShareButton,
+  XIcon,
+  FacebookIcon,
+  HatenaIcon,
+  LineIcon,
+} from "react-share";
 
 const SUBSCRIBE_CHANNEL = graphql(/* GraphQL */ `
   mutation SubscribeChannel($channelID: ID!) {
@@ -44,6 +53,10 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
   const [subscribeChannel] = useMutation(SUBSCRIBE_CHANNEL);
   const [unSubscribeChannel] = useMutation(UNSUBSCRIBE_CHANNEL);
   const [isSubscribed, setIsSubscribed] = useState(false);
+
+  let URL = "https://yuovision.yuorei.com/" + "video/" + video.id;
+  let QUOTE = video.title + " \n " + URL + " via @yuovision";
+
   const {
     loading: userLoading,
     error: userError,
@@ -91,7 +104,7 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
     <div className="p-4">
       <h1 className="text-2xl font-bold">{video.title}</h1>
       <div className="flex items-center mt-4">
-        <CustomLink href={`/channel/${video.uploader.id}`}>
+        <Link href={`/channel/${video.uploader.id}`}>
           <Image
             src={video.uploader.profileImageURL}
             alt={video.uploader.name}
@@ -99,12 +112,12 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
             width={100}
             height={100}
           />
-        </CustomLink>
-        <CustomLink href={`/channel/${video.uploader.id}`}>
+        </Link>
+        <Link href={`/channel/${video.uploader.id}`}>
           <div className="ml-2">
             <p className="text-lg">{video.uploader.name}</p>
           </div>
-        </CustomLink>
+        </Link>
         <div>
           {userData ? (
             <button
@@ -127,6 +140,25 @@ export default function VideoHeader({ video }: VideoHeaderProps) {
               ログイン
             </button>
           )}
+        </div>
+        <div className="ml-auto flex gap-2">
+          <Link href={"https://twitter.com/intent/tweet?text=" + QUOTE} target="_blank">
+            <XIcon size={32} round />
+          </Link>
+          <LineShareButton url={URL} title={QUOTE}>
+            <LineIcon size={32} round />
+          </LineShareButton>
+          <FacebookShareButton url={URL} hashtag={QUOTE}>
+            <FacebookIcon size={32} round />
+          </FacebookShareButton>
+          <HatenaShareButton
+            url={URL}
+            title={QUOTE}
+            windowWidth={660}
+            windowHeight={460}
+          >
+            <HatenaIcon size={32} round />
+          </HatenaShareButton>
         </div>
       </div>
       <div className="bg-zinc-600 mt-2 rounded-lg p-4">
