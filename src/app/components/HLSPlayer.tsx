@@ -14,10 +14,16 @@ import {
 import { GetVideoFragmentFragment } from "@/app/gql/graphql";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { graphql } from "@/app/gql";
+import Link from "next/link";
+import Image from "next/image";
 
 export interface Ad {
   adURL: string;
+  adVideoURL: string;
   adTiming: number;
+  adTitle: string;
+  adDescription: string;
+  adThumbnailURL: string;
 }
 
 interface HLSPlayerProps {
@@ -30,6 +36,14 @@ const incrementWatchCountDocument = graphql(/* GraphQL */ `
   mutation IncrementWatchCount($input: IncrementWatchCountInput!) {
     IncrementWatchCount(input: $input) {
       watchCount
+    }
+  }
+`);
+
+const watchCountAdVideoDocument = graphql(`
+  mutation WatchCountAdVideo($input: WatchCountAdVideoInput!) {
+    watchCountAdVideo(input: $input) {
+      success
     }
   }
 `);
@@ -80,7 +94,11 @@ const useTrimVideo = (videoId: string) => {
   return handleTrim;
 };
 
-const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
+const HLSPlayer: React.FC<HLSPlayerProps> = ({
+  src,
+  ads,
+  video: videoInfo,
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -96,14 +114,12 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
   const [showControls, setShowControls] = useState(true);
   const [isCounted, setIsCounted] = useState(false);
   const [IncrementWatchCount] = useMutation(incrementWatchCountDocument);
+  const [watchCountAdVideo] = useMutation(watchCountAdVideoDocument);
   const [showTrimModal, setShowTrimModal] = useState(false);
   const [trimStart, setTrimStart] = useState("0");
   const [trimEnd, setTrimEnd] = useState("0");
 
-  // const handleTrim = (startTime: number, endTime: number) => {
-  //   useTrimVideo(video.id, startTime, endTime);
-  // };
-  const handleTrim = useTrimVideo(video.id);
+  const handleTrim = useTrimVideo(videoInfo.id);
 
   const handleTrimButtonClick = () => {
     setTrimStart("0");
@@ -117,7 +133,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
   };
 
   useEffect(() => {
-    if (!isCounted && video) {
+    if (!isCounted && videoInfo) {
       try {
         if (localStorage.getItem("clientID") === null) {
           localStorage.setItem(
@@ -128,7 +144,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
         IncrementWatchCount({
           variables: {
             input: {
-              VideoID: video.id,
+              VideoID: videoInfo.id,
               UserID: localStorage.getItem("clientID") as string,
             },
           },
@@ -139,7 +155,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
         console.log(e);
       }
     }
-  }, [isCounted, video, IncrementWatchCount, video.id]);
+  }, [isCounted, videoInfo, IncrementWatchCount, videoInfo.id]);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -211,14 +227,66 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
           !isAltVideo
         ) {
           setCurrentTime(videoRef.current?.currentTime as number);
-          video.src = ads[currentTime2].adURL; // 広告動画をセット
+          video.src = ads[currentTime2].adVideoURL; // 広告動画をセット
           setIsAltVideo(true);
           video.play();
         }
       };
 
-      const onAltVideoEnd = () => {
+      const getClientIP = async (): Promise<string> => {
+        const response = await fetch("https://api.ipify.org?format=json");
+        const data = await response.json();
+        return data.ip;
+      };
+
+      const onAltVideoEnd = async () => {
         if (isAltVideo) {
+          try {
+            if (localStorage.getItem("clientID") === null) {
+              localStorage.setItem(
+                "clientID",
+                "client" + "_" + crypto.randomUUID()
+              );
+            }
+
+            const clientIP = await getClientIP();
+
+            watchCountAdVideo({
+              variables: {
+                input: {
+                  adID: ads[currentTime2].adVideoURL,
+                  city: "",
+                  clientID: localStorage.getItem("clientID") as string,
+                  country: "",
+                  description: videoInfo.description || "",
+                  hostname: window.location.hostname,
+                  ipAddress: clientIP,
+                  language: navigator.language,
+                  location: "",
+                  networkDownlink: "",
+                  networkEffectiveType: "",
+                  org: "",
+                  pageTitle: document.title,
+                  platform: navigator.platform,
+                  postal: "",
+                  referrer: document.referrer,
+                  region: "",
+                  tags: (videoInfo.Tags as string[]) || [],
+                  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                  title: document.title,
+                  url: window.location.href,
+                  userAgent: navigator.userAgent,
+                  userID: "",
+                  videoID: videoInfo.id,
+                },
+              },
+            });
+
+            setIsCounted(true);
+          } catch (e) {
+            console.log(e);
+          }
+
           video.src = src; // 元の動画に戻す
           video.currentTime = ads[currentTime2].adTiming; //広告挿入タイミングに戻す
           setIsAltVideo(false);
@@ -248,11 +316,11 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
       const video = videoRef.current;
       if (Hls.isSupported()) {
         hls = new Hls();
-        hls.loadSource(isAltVideo ? ads[currentTime2].adURL : src);
+        hls.loadSource(isAltVideo ? ads[currentTime2].adVideoURL : src);
         hls.attachMedia(video);
       } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
         // HLS support for platforms
-        video.src = isAltVideo ? ads[currentTime2].adURL : src;
+        video.src = isAltVideo ? ads[currentTime2].adVideoURL : src;
       }
 
       return () => {
@@ -354,39 +422,67 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({ src, ads, video }) => {
           onLoadedMetadata={() => setDuration(videoRef.current?.duration || 0)}
         />
         {isAltVideo && (
-          <div className="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 m-2 rounded-md text-sm font-semibold">
-            広告再生中
-          </div>
+          <>
+            <div className="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 m-2 rounded-md text-sm font-semibold">
+              広告再生中
+            </div>
+            <div className="absolute bottom-10 left-0 bg-gray-800 bg-opacity-90 text-white p-3 m-3 rounded-md text-sm shadow-lg">
+              <div className="flex items-center space-x-2">
+                <Image
+                  src={ads[currentTime2]?.adThumbnailURL}
+                  alt="広告"
+                  width={50}
+                  height={30}
+                />
+                <div>
+                  <h3 className="font-bold">
+                    {ads[currentTime2]?.adTitle || "広告"}
+                  </h3>
+                  <p className="text-xs opacity-75">
+                    {ads[currentTime2]?.adDescription || "説明なし"}
+                  </p>
+                </div>
+                <div>
+                  <Link href={ads[currentTime2]?.adURL}>
+                    <button
+                      type="button"
+                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    >
+                      詳細
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </>
         )}
         {showControls && (
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-            {!isAltVideo && (
-              <div className="flex items-center space-x-2 mb-2">
-                <input
-                  type="range"
-                  className="w-full h-1 accent-blue-500 appearance-none bg-gray-300 rounded-full overflow-hidden"
-                  min="0"
-                  max={duration}
-                  value={currentTime}
-                  onChange={(e) => {
-                    const newTime = parseFloat(e.target.value);
-                    setCurrentTime(newTime);
-                    if (videoRef.current)
-                      videoRef.current.currentTime = newTime;
-                  }}
-                  style={{
-                    background: `linear-gradient(to right, #3B82F6 0%, #3B82F6 ${
-                      (currentTime / duration) * 100
-                    }%, #D1D5DB ${
-                      (currentTime / duration) * 100
-                    }%, #D1D5DB 100%)`,
-                  }}
-                />
-                <div className="text-white text-sm font-mono whitespace-nowrap">
-                  {formatTime(currentTime)} / {formatTime(duration)}
-                </div>
+            <div className="flex items-center space-x-2 mb-2">
+              <input
+                type="range"
+                className="w-full h-1 accent-red-500 appearance-none bg-gray-300 rounded-full overflow-hidden"
+                min="0"
+                disabled={isAltVideo}
+                max={duration}
+                value={currentTime}
+                onChange={(e) => {
+                  const newTime = parseFloat(e.target.value);
+                  setCurrentTime(newTime);
+                  if (videoRef.current) videoRef.current.currentTime = newTime;
+                }}
+                style={{
+                  background: `linear-gradient(to right, #3B82F6 0%, #3B82F6 ${
+                    (currentTime / duration) * 100
+                  }%, #D1D5DB ${
+                    (currentTime / duration) * 100
+                  }%, #D1D5DB 100%)`,
+                }}
+              />
+              <div className="text-white text-sm font-mono whitespace-nowrap">
+                {formatTime(currentTime)} / {formatTime(duration)}
               </div>
-            )}
+            </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <button
