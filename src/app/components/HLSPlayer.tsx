@@ -18,6 +18,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export interface Ad {
+  adID: string;
   adURL: string;
   adVideoURL: string;
   adTiming: number;
@@ -254,7 +255,7 @@ const HLSPlayer: React.FC<HLSPlayerProps> = ({
             watchCountAdVideo({
               variables: {
                 input: {
-                  adID: ads[currentTime2].adVideoURL,
+                  adID: ads[currentTime2].adID,
                   city: "",
                   clientID: localStorage.getItem("clientID") as string,
                   country: "",
