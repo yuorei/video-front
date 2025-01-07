@@ -105,6 +105,7 @@ export default function VideoPage({ params }: { params: { id: string } }) {
     let count = 0;
     for (const adData of adDatas.adVideo) {
       ads.push({
+        adID: adData.adID,
         adVideoURL: adData.videoURL,
         adURL: adData.adURL,
         adTiming: 300 * count,
